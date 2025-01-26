@@ -1,0 +1,11 @@
+{ "id": "pawlclock",
+  "name": "Pawl Clock",
+  "shortName":"Pawl Clock",
+  "version": "0.01",
+  "description": "A full of infos digital clock face, with style",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+}
