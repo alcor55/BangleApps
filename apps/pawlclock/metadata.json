@@ -9,7 +9,6 @@
   "readme": "README.md",
   "supports" : ["BANGLEJS2"],
   "allow_emulator": true,
-  "dependencies" : { "widget_utils":"module" },
   "storage": [
     {"name":"pawlclock.app.js","url":"app.js"},
     {"name":"pawlclock.img","url":"icon.js","evaluate":true}
