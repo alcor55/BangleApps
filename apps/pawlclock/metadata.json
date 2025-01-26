@@ -8,4 +8,9 @@
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
   "allow_emulator": true,
+  "dependencies" : { "clock_info":"module" },
+  "storage": [
+    {"name":"pawlclock.app.js","url":"app.js"},
+    {"name":"pawlclock.img","url":"icon.js","evaluate":true}
+  ]
 }
