@@ -1,5 +1,5 @@
 /*
-*    PawlClock v0.01
+*    PawlClock v0.02
 *    Icon drawn on https://www.pixilart.com/draw (must be white for color fill, transparent bg).
 *    Converted with https://www.espruino.com/Image+Converter (1 bit bw, transparency?).
 *    18 days battery.
@@ -90,7 +90,7 @@
     setTimeout(Bangle.drawWidgets,0); // Draw widgets. (FastLoading way).
     // Draw all on the first run.
     drawTheme(); 
-    drawUTC();
+    //drawUTC();
     drawBpm();
     setSteps();
     drawBLE();
@@ -145,7 +145,7 @@
     g.fillRect(w - 3, h - 2, w - 1, h - 2);
     g.fillRect(w - 2, h - 3, w - 1, h - 3);
     g.fillRect(w - 1, h - 4, w - 1, h - 5);
-    // Lines.
+    /* Lines.
     g.setColor(drawingColor);
     let bar0_x = 8;
     let bar0_y = 30;
@@ -174,6 +174,7 @@
     let bar8_x = 61;
     let bar8_y = 115;
     g.fillRect(bar8_x, bar8_y, bar8_x+114, bar8_y+1);
+    */
   };
 
   // *******************
@@ -197,11 +198,11 @@
     let date = new Date();
     let utc = date.getTimezoneOffset() / -60;
     // Draw time.
-    let utcX = 8;
-    let utcY = 104;
-    g.reset().setColor(cleanColor).fillRect(utcX, utcY, utcX+49, utcY+9).setColor(drawingColor); // Clear.
-    g.setFontAlign(-1, 0).setFont("Vector", 13).drawString('UTC', utcX, utcY+5);
-    g.setFontAlign(0, 0).drawString((utc >= 0 ? "+" : "") + utc, utcX+40, utcY+5);
+    let X = 8;
+    let Y = 104;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+49, Y+9).setColor(drawingColor); // Clear.
+    g.setFontAlign(-1, 0).setFont("Vector", 13).drawString('UTC', X, Y+5);
+    g.setFontAlign(0, 0).drawString((utc >= 0 ? "+" : "") + utc, X+40, Y+5);
   };
 
   // *******************
@@ -234,10 +235,10 @@
     if (debug) { g.reset().setColor(cleanColor).fillRect(icon_x, icon_y, icon_x+13, icon_y+13); } // Clear. 
     g.setColor(drawingColor).drawImage(atob("Dg6BADhz/////////wA9tvbbwA9tvbbwA/////A="), icon_x, icon_y); // 14x14.
     // Draw year.
-    let yearX = 32;
-    let yearY = 75;
-    g.reset().setColor(cleanColor).fillRect(yearX, yearY, yearX+40, yearY+12).setColor(drawingColor); // Clear. 
-    g.setFont("Vector", 17).drawString(year, yearX, yearY-1);
+    //let yearX = 32;
+    //let yearY = 75;
+    //g.reset().setColor(cleanColor).fillRect(yearX, yearY, yearX+40, yearY+12).setColor(drawingColor); // Clear. 
+    //g.setFont("Vector", 17).drawString(year, yearX, yearY-1);
   };
   
   // *******************
@@ -307,15 +308,15 @@
   let drawBLE = function() {
     if (debug) console.log('drawBLE');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let infoX = 30;
-    let infoY = 6;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY, infoX+9, infoY+17); // Clear. 
+    let X = 29;
+    let Y = 4;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+9, Y+17); // Clear. 
     if (NRF.getSecurityStatus().connected) {
       g.setColor(0x001f); // Blue.
     } else {
       g.setColor(drawingColor);
     }
-    g.drawImage(atob("ChKBABgHAeB82753uPweD4fz7tnG4fB4HAYA"), infoX, infoY); // 10x18.
+    g.drawImage(atob("ChKBABgHAeB82753uPweD4fz7tnG4fB4HAYA"), X, Y); // 10x18.
   };
   // BLE update events.
   NRF.on('connect', drawBLE);
@@ -325,14 +326,14 @@
   // Lock Screen drawing.
   let drawLock = function() {
     if (debug) console.log('drawLock');
-    let infoX = 8;
-    let infoY = 6;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY, infoX+13, infoY+17); // Clear. 
+    let X = 7;
+    let Y = 4;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+13, Y+17); // Clear. 
     g.setColor(drawingColor);
     if (Bangle.isLocked()) {
-      g.drawImage(atob("DhKBAAAAHgH+DzwwMcDmAZgGYBv/////P/h/4f/P/h/////w"), infoX, infoY); // 14x18.
+      g.drawImage(atob("DhKBAAAAHgH+DzwwMcDmAZgGYBv/////P/h/4f/P/h/////w"), X, Y); // 14x18.
     } else {
-      g.drawImage(atob("DhKBAB8B/gccODjgY4AHABwAOAP/////P/h/4f/P/h/////w"), infoX, infoY); // 14x18.
+      g.drawImage(atob("DhKBAB8B/gccODjgY4AHABwAOAP/////P/h/4f/P/h/////w"), X, Y); // 14x18.
     }
   };
   // Lock Screen info update events.
@@ -343,9 +344,9 @@
   let drawGPS = function() {
     if (debug) console.log('drawGPS');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let infoX = 48;
-    let infoY = 6;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY, infoX+17, infoY+17); // Clear. 
+    let X = 46;
+    let Y = 4;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+17, Y+17); // Clear. 
     // check if we need to update the widget periodically
     if (Bangle.isGPSOn() && intervalGPS === undefined) {
       intervalGPS = setInterval(
@@ -365,7 +366,7 @@
     } else {
       g.setColor(drawingColor); // ( GPS off ).
     }
-    g.drawImage(atob("EhKBADgAGwANYAKswNd4G78D/+Bv+Af8A/4A/2Hf/Hvdj26x41Q4awYNgAHA"), infoX, infoY); // 17x18.
+    g.drawImage(atob("EhKBADgAGwANYAKswNd4G78D/+Bv+Af8A/4A/2Hf/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
   };
   var intervalGPS;
   // GPS info update events.
@@ -387,21 +388,21 @@
       changeInterval(battIntervallID, 30000);
     else
       changeInterval(battIntervallID, battIntervall);
-    let infoX = 74;
-    let infoY = 6;
+    let X = 72;
+    let Y = 4;
     let battPixels = 18;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY+1, infoX+53, infoY+16); // Clear.
-    const batteryVal = E.getBattery();
-    let xl = infoX+1+batteryVal*(battPixels)/100;
-    g.setColor(0x8410).fillRect(infoX+2, infoY+3, xl, infoY+14); // Grey.
+    g.reset().setColor(cleanColor).fillRect(X, Y+1, X+53, Y+16); // Clear.
+    const batteryVal = 50;//E.getBattery();
+    let xl = X+1+batteryVal*(battPixels)/100;
+    g.setColor(0x8410).fillRect(X+2, Y+3, xl, Y+14); // Grey.
     g.setColor(drawingColor);
     let fontSize = 14;
     if (batteryVal=='100') fontSize = 12;
-    g.setFontAlign(-1,0).setFont("Vector", fontSize).drawString(batteryVal+'%', infoX+26, infoY+10);
+    g.setFontAlign(-1,0).setFont("Vector", fontSize).drawString(batteryVal+'%', X+26, Y+10);
     if (Bangle.isCharging()) {
-      g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAwDMDwD8PwD8/x794/z8A/D8A8D8AwDMAADMAADP///H//+AAAAA=="), infoX, infoY); // 24x18 chr.
+      g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAwDMDwD8PwD8/x794/z8A/D8A8D8AwDMAADMAADP///H//+AAAAA=="), X, Y); // 24x18 chr.
     } else {
-      g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAADMAAD8AAD8AAD8AAD8AAD8AAD8AADMAADMAADP///H//+AAAAA=="), infoX, infoY); // 24x18 batt.
+      g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAADMAAD8AAD8AAD8AAD8AAD8AAD8AADMAADMAADP///H//+AAAAA=="), X, Y); // 24x18 batt.
     }
   };
   let setBatt = function() {
@@ -417,60 +418,66 @@
   let drawMemory = function() {
     if (debug) console.log('drawMemory');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let infoX = 136;
-    let infoY = 6;
-    let maxBarPixels = 15;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY+1, infoX+38, infoY+16); // Clear. 
-    g.setColor(drawingColor).drawImage(atob("BxCBAH399/ff3wAAcbc+P98c"), infoX, infoY+1); // 7x16 chr
+    let X = 131;
+    let Y = 3;
+    let maxBarPixels = 19;
     let m = process.memory(false); 
     let totalHDSpace = process.env.STORAGE;
     let ramUsedPercent = Math.round(m.usage*100 / m.total);
-    let hdUsedPercent = Math.round(((totalHDSpace - storage.getFree()) / totalHDSpace) * 100);   
-    let ramBarPixels = infoX+10+ramUsedPercent*(maxBarPixels)/100;
-    g.setFontAlign(-1,0).setFont("Vector", 6);
-    g.fillRect(infoX+9, infoY+1, ramBarPixels, infoY+8).drawRect(infoX+9, infoY+1, infoX+25, infoY+8);
-    g.drawString(ramUsedPercent, infoX+28, infoY+5);
-    let hdBarPixels = infoX+10+hdUsedPercent*(maxBarPixels)/100;
-    g.fillRect(infoX+9, infoY+9, hdBarPixels, infoY+16).drawRect(infoX+9, infoY+9, infoX+25, infoY+16);
-    g.drawString(hdUsedPercent, infoX+28, infoY+13);
+    let hdUsedPercent = Math.round(((totalHDSpace - storage.getFree()) / totalHDSpace) * 100); 
+    let ramBarPixels = X+11+ramUsedPercent*(maxBarPixels)/100;
+    let hdBarPixels = X+11+hdUsedPercent*(maxBarPixels)/100;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+41, Y+19); // Clear.  
+    g.setColor(drawingColor).fillRect(X, Y, X+41, Y+19)
+    g.setColor(cleanColor).drawImage(atob("BxCBAH399/ff3wAAcbc+P98c"), X+2, Y+2); // 7x16 chr
+    // main corner.
+    g.fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1);
+    g.fillRect(X, Y+19, X+1, Y+19).fillRect(X, Y+18, X, Y+19);
+    g.fillRect(X+40, Y+19, X+41, Y+19).fillRect(X+41, Y+18, X+41, Y+19);
+    g.fillRect(X+40, Y, X+41, Y).fillRect(X+41, Y, X+41, Y+1);
+    // values.
+    g.drawString(ramUsedPercent, X+33, Y+3);
+    g.drawString(hdUsedPercent, X+33, Y+12);
+    // bars.
+    g.fillRect(X+11, Y+2, X+11+maxBarPixels, Y+8).fillRect(X+11, Y+11, X+11+maxBarPixels, Y+17);
+    g.setColor(0x001f);// fill.  
+    g.fillRect(X+11, Y+2, ramBarPixels, Y+8).fillRect(X+11, Y+11, hdBarPixels, Y+17);
+    g.setColor(drawingColor);//border
+    g.setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2);
+    g.setPixel(X+11, Y+8).setPixel(X+11+maxBarPixels, Y+8);
+    g.setPixel(X+11, Y+11).setPixel(X+11+maxBarPixels, Y+11);
+    g.setPixel(X+11, Y+17).setPixel(X+11+maxBarPixels, Y+17);
   };
   let setMemory = function() {
     if (debug) console.log('setMemory');
     if ( memIntervall == 0 ) memIntervall = 1000; // Real time mode. (1sec).
-    memIntervallID = setInterval(drawMemory, memIntervall); 
+    memIntervallID = setInterval(drawMemory, memIntervall);
   };
 
   // *******************
-  // Draw temperature and pressure.
-  let barTemperatures = [];
+  // Draw weather.
   let barPressures = [];
   let barIntervallID;
-  // Estimated ambient air temperature.
-  let estAmbientTemp = function(sensorTemp) {
-    let alpha = 1.7; // Thermal insulation coefficient.
-    let wristSkinTemp = 33; // Estimated average skin temperature.
-    return sensorTemp - alpha * (sensorTemp - wristSkinTemp); // Dynamic calc contribution of wrist heat.
-  };
   // Get barometer temperature and pressure values.
-  let drawBarometer = function(temperature, pressure) {
-    if (debug) console.log('drawBarometer');
-    let barX = 68;
-    let barY = 96;
-    g.reset().setColor(cleanColor).fillRect(barX, barY, barX+104, barY+13).setColor(drawingColor); // Clear. 
-    g.drawImage(atob("Bw6BADhQoUKHDhx9///3xwA="), barX, barY); // 7x14.
-    g.setFontAlign(1, 0).setFont("Vector", 16).drawString(temperature, barX+30, barY+8).drawString(pressure, barX+89, barY+8);
-    g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('C°', barX+32, barY+7);
-    g.setFontAlign(-1, 0).drawString('hPa', barX+90, barY+7);
+  let drawWeather = function(pressure) {
+    if (debug) console.log('drawWeather');
+    let X = 68;
+    let Y = 96;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+104, Y+13).setColor(drawingColor); // Clear. 
+
+    //g.reset().setColor(cleanColor).fillRect(X, Y+1, X+38, Y+16); // Clear. 
+    //g.setColor(drawingColor).drawImage(atob("BxCBAH399/ff3wAAcbc+P98c"), X, Y+1); // 7x16 chr
+
+    g.setFontAlign(1, 0).setFont("Vector", 16).drawString(pressure, X+89, Y+8);
+    g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('hPa', X+90, Y+7);
   };
   let getBarometer = function(e) {
     if (debug) console.log('getBarometer');
     let barReadings = 8;
-    if (barTemperatures.length > barReadings) barTemperatures.splice(barReadings);
     if (barPressures.length > barReadings) barPressures.splice(barReadings);
-    barTemperatures.unshift(e.temperature);
     barPressures.unshift(e.pressure);
     // Shut down the barometer at barReadings.
-    if (barTemperatures.length >= barReadings) {
+    if (barPressures.length >= barReadings) {
       if ( barIntervall > 0 ) {
         if (debug) console.log('releaseBarometer');
         Bangle.removeListener('pressure', getBarometer);
@@ -479,15 +486,9 @@
       // Calc avgs.
       let sumPress = barPressures.reduce((acc, value) => acc + value, 0);
       let avgPress = sumPress / barPressures.length;
-      let sumTemp = barTemperatures.reduce((acc, value) => acc + value, 0);
-      let avgTemp = sumTemp / barTemperatures.length;
-      barTemperatures = [];
       barPressures = [];
-      let estTemp = estAmbientTemp(avgTemp);
-      let temperature = Math.round(estTemp+tempOffset); // C. xx.
-      //let temperature = (avgTemp> -100 && avgTemp < 1000) ? avgTemp.toFixed(1) : avgTemp.toFixed(0); // C. xx,x.
       let pressure = (avgPress> -100 && avgPress < 1000) ? avgPress.toFixed(1) : avgPress.toFixed(0); // hPa. xxxx.
-      drawBarometer(temperature,pressure);
+      drawWeather(pressure);
     }
   };
   function initBarometer() {
@@ -498,7 +499,7 @@
   }
   function setBarometer() {
     if (debug) console.log('setBarometer');
-    drawBarometer(0,0); // First zero draw.
+    drawWeather(0); // First zero draw.
     if ( barIntervall > 0 ) {
       barIntervallID = setInterval( initBarometer, barIntervall); // Schedule next runs.
     } else { // Real time mode.
