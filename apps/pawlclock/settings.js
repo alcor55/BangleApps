@@ -3,11 +3,12 @@
   
   if (typeof settings.bgColor !== "number")       settings.bgColor =      0xffff; // Default white.
   if (typeof settings.offScreenUpd !== "boolean") settings.offScreenUpd =   true; // Default true.
-  if (typeof settings.tempOffset !== "number")    settings.tempOffset =        0; // Default 0.
   if (typeof settings.barIntervall !== "number")  settings.barIntervall = 600000; // Default 10min.
   if (typeof settings.battIntervall !== "number") settings.battIntervall = 60000; // Default 1min.
   if (typeof settings.memIntervall !== "number")  settings.memIntervall =  60000; // Default 1min.
   if (typeof settings.stepIntervall !== "number") settings.stepIntervall = 60000; // Default 1min.
+  if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005; // Default 1min.
+  if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020; // Default 1min.
   if (typeof settings.debug !== "boolean")        settings.debug =         false; // Default false.
   
   function save(key, value) {
@@ -88,20 +89,6 @@
       min: 0, max: intervals.length - 1,
       format: v => intervalsLabels[v],
       onchange: v => save('stepIntervall', intervals[v].millisec)
-    },
-    'Termometer Offset': {
-      value: settings.tempOffset,
-      min: -10,
-      max: 10,
-      step: 0.1,
-      format: v => v.toString(),
-      onchange: v => {
-        if (typeof v === "number" && v >= -10 && v <= 10) {
-          save('tempOffset', v);
-        } else {
-          console.log("Error: Min -10, Max 10.");
-        }
-      }
     },
     'Debug': {
       value: settings.debug,

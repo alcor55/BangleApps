@@ -36,6 +36,17 @@ Graphics.prototype.setFontLato = function() {
   );
 }
   
+Graphics.prototype.setFontQuicksand = function() {
+  // Actual height 66 (65 - 0)
+  // 1 BPP
+  return this.setFontCustom(
+    E.toString(require('heatshrink').decompress(atob('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'))),
+    46,
+    atob("DCYoFSUjJiQlJCQlDQ=="),
+    70|65536
+  );
+}
+  
   // *******************
   // Load settings.
   let settings = Object.assign({
@@ -46,16 +57,19 @@ Graphics.prototype.setFontLato = function() {
     stepIntervall: 60000, // Default 1min.
     battIntervall: 60000, // Default 1min.
     offScreenUpd:   true, // Default true.
-    tempOffset:        0  // Default 0.
+    weatherMinPress:1005, // Default 1005.
+    weatherMaxPress:1020  // Default 1020.
   }, storage.readJSON("pawl-clock.json", true) || {});
   let offScreenUpd = (settings.debug) ? true : settings.offScreenUpd;
-  let tempOffset = settings.tempOffset;
+  let weatherMinPress = settings.weatherMinPress;
+  let weatherMaxPress = settings.weatherMaxPress;
+
   // Intervall settings.
   let barIntervall = settings.barIntervall;
   let memIntervall = settings.memIntervall;
   let stepIntervall = settings.stepIntervall;
   let battIntervall = settings.battIntervall;
-  let debug = settings.debug;
+  let debug = true;//settings.debug;
 
   // *******************
   // Colors definitios.
@@ -157,8 +171,10 @@ Graphics.prototype.setFontLato = function() {
     // Draw time.
     let X = 5;
     let Y = 34;
+    //g.reset().setColor(cleanColor).fillRect(X, Y, X+165, Y+50).setColor(drawingColor); // Clear.
+    //g.setFontAlign(0, 0).setFontLato().drawString(timeStr, X+83, Y+29);
     g.reset().setColor(cleanColor).fillRect(X, Y, X+165, Y+50).setColor(drawingColor); // Clear.
-    g.setFontAlign(0, 0).setFontLato().drawString(timeStr, X+83, Y+29);
+    g.setFontAlign(0, 0).setFontQuicksand().drawString(timeStr, X+83, Y+29);
   };
 
   // *******************
@@ -412,13 +428,15 @@ Graphics.prototype.setFontLato = function() {
     let X = 5;
     let Y = 138;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+82, Y+14); // Clear. 
-    
-    g.setColor(drawingColor).drawImage(atob("Eg+BAAA+ABjADBg2Ax+AzC42C42Bw8DhuHDH3uADgAHAAOAAIAA="), X, Y); // 7x16 chr
-    //g.setColor(drawingColor).drawImage(atob("GQ6BAEEAADGGAAyGAAHyD4D+DGD/DBt/bAb+fgMfYYGPYEDJsABsMABsHHhgB/fg"), X, Y); // 7x16 chr
-    //g.setColor(drawingColor).drawImage(atob("Dg6BAEEBjDMhg+QP4H+N/5/7H+B/AnwYTMMYCCA="), X+2, Y); // 7x16 chr
-    
-    //g.setFontAlign(1, 0).setFont("Vector", 16).drawString(pressure, X+89, Y+8);
-    g.setFontAlign(1, 0).setFont("Vector", 16).drawString('1200', X+67, Y+9);
+  
+    if (pressure > settings.weatherMaxPress) {
+      g.setColor(drawingColor).drawImage(atob("Dg6BAEEBjDMhg+QP4H+N/5/7H+B/AnwYTMMYCCA="), X+2, Y); //sun
+    } else if (pressure < settings.weatherMinPress) {
+      g.setColor(drawingColor).drawImage(atob("Eg+BAAA+ABjADBg2Ax+AzC42C42Bw8DhuHDH3uADgAHAAOAAIAA="), X, Y); //stormy
+    } else {
+      g.setColor(drawingColor).drawImage(atob("GQ6BAEEAADGGAAyGAAHyD4D+DGD/DBt/bAb+fgMfYYGPYEDJsABsMABsHHhgB/fg"), X, Y); //overcast 
+    }
+    g.setFontAlign(1, 0).setFont("Vector", 16).drawString(pressure, X+67, Y+9);
     g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('hPa', X+68, Y+10);
   };
   let getBarometer = function(e) {
