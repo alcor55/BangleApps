@@ -12,7 +12,7 @@
   // * Load the files by ide(run), not by coping with the file manager, otherwise the required modules where not loaded on the bangle storage.
   const locale = require('locale');
   const storage = require('Storage');
-  const heatshrink = require("heatshrink");
+  //const heatshrink = require("heatshrink");
   const widget_utils = require("widget_utils");
 
   // *******************
@@ -57,10 +57,13 @@ Graphics.prototype.setFontQuicksand = function() {
     stepIntervall: 60000, // Default 1min.
     battIntervall: 60000, // Default 1min.
     offScreenUpd:   true, // Default true.
-    tempOffset:        0  // Default 0.
+    weatherMinPress:1005, // Default 1005.
+    weatherMaxPress:1020  // Default 1020.
   }, storage.readJSON("pawl-clock.json", true) || {});
+
   let offScreenUpd = (settings.debug) ? true : settings.offScreenUpd;
-  let tempOffset = settings.tempOffset;
+  let weatherMinPress = settings.weatherMinPress;
+  let weatherMaxPress = settings.weatherMaxPress;
   // Intervall settings.
   let barIntervall = settings.barIntervall;
   let memIntervall = settings.memIntervall;
@@ -155,7 +158,6 @@ Graphics.prototype.setFontQuicksand = function() {
     let dayNum = ("0" + date.getDate()).slice(-2);
     let monthStr = locale.month(date, 1);
     let monthNum = ("0" + (date.getMonth() + 1)).slice(-2);
-    let year = date.getFullYear();
     let X = 5;
     let Y = 96;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+30).setColor(drawingColor); // Clear. 
@@ -163,8 +165,6 @@ Graphics.prototype.setFontQuicksand = function() {
     g.fillRect(X+45, Y+12, X+47, Y+30);
     // Draw day.
     g.setColor(drawingColor).setFontAlign(0, 0);
-    let dayX = 22;
-    let dayY = 118;
     g.setFont("Vector", 14).drawString(dayStr, X+30, Y+6);
     g.setFont("Vector", 20).drawString(dayNum, X+30, Y+23);
     // Draw month.
