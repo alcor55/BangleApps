@@ -1,4 +1,5 @@
 (function(back) {
+  
   let settings = require('Storage').readJSON('pawl-clock.json', 1) || {};
   
   if (typeof settings.bgColor !== "number")       settings.bgColor = 0xffff;
@@ -52,7 +53,7 @@
   const battIntervalIndex = getIntervalIndex(settings.battIntervall);
   const stepIntervalIndex = getIntervalIndex(settings.stepIntervall);
   
-  const appMenu = {
+  E.showMenu({
     '': { 'title': 'PawlClock' },
     '< Back': back,
     "BG Color": {
@@ -105,7 +106,5 @@
       value: settings.debug,
       onchange: v => save('debug', v)
     }
-  };
-  
-  E.showMenu(appMenu);
-})();
+  });
+})
