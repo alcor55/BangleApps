@@ -14,5 +14,8 @@
     { "name": "pawl.app.js", "url": "app.js" },
     { "name": "pawl.img", "url": "icon.js", "evaluate": true },
     { "name": "pawl.settings.js", "url": "settings.js" }
+  ],
+  "data": [
+    { "name": "pawl.settings.json" }
   ]
 }

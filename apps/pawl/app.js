@@ -93,29 +93,6 @@ Graphics.prototype.setFontQuicksand = function() {
   };
 
   // *******************
-  // Run only on the first app execution.
-  let makeIt = function() {
-    // Set widgets.
-    Bangle.loadWidgets(); // Load widgets.
-    widget_utils.hide(); // Hide widgets. (FastLoading way).
-    setTimeout(Bangle.drawWidgets,0); // Draw widgets. (FastLoading way).
-    // Draw all on the first run.
-    drawTheme(); 
-    drawBpm();
-    setSteps();
-    drawBLE();
-    drawLock();
-    drawGPS();
-    setBatt();
-    drawBatt();
-    setMemory();
-    drawMemory();
-    setBarometer();
-    // Draw time and date and init the update loop.
-    mainLoop();
-  };
-
-  // *******************
   // Main draw.
   let mainLoop = function() {
     // Set next minute update timer.
@@ -493,6 +470,29 @@ Graphics.prototype.setFontQuicksand = function() {
       widget_utils.show(); // Show widgets. (FastLoading way).
     }
   });
+
+  // *******************
+  // Run only on the first app execution.
+  let makeIt = function() {
+    // Set widgets.
+    Bangle.loadWidgets(); // Load widgets.
+    widget_utils.hide(); // Hide widgets. (FastLoading way).
+    setTimeout(Bangle.drawWidgets,0); // Draw widgets. (FastLoading way).
+    // Draw all on the first run.
+    drawTheme(); 
+    drawBpm();
+    setSteps();
+    drawBLE();
+    drawLock();
+    drawGPS();
+    setBatt();
+    drawBatt();
+    setMemory();
+    drawMemory();
+    setBarometer();
+    // Draw time and date and init the update loop.
+    mainLoop();
+  };
 
   // *******************
   // Clock-app entery point.
