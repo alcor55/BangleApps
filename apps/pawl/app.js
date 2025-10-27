@@ -1,5 +1,5 @@
 /*
-*    PawlClock v0.02
+*    Pawl Clock v0.02
 *    Icon drawn on https://www.pixilart.com/draw (must be white for color fill, transparent bg).
 *    Converted with https://www.espruino.com/Image+Converter (1 bit bw, transparency?).
 *    18 days battery.
@@ -17,7 +17,7 @@
 
   // *******************
   // Globals.
-  let appName = 'PawlClock_v0.01';
+  let appName = 'Pawl_Clock_v0.01';
   const w = g.getWidth(); // 176 Pixels.
   const h = g.getHeight(); // 176 Pixels.
 
@@ -85,7 +85,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // Next minute mainLoop schedule.
   let mainTimeoutID;
   let mainLoopTimer = function() {
-    if (debug) console.log('mainLoopTimer');
     if (mainTimeoutID) clearTimeout(mainTimeoutID);
     mainTimeoutID = setTimeout(function() {
       mainTimeoutID = undefined;
@@ -96,7 +95,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // Run only on the first app execution.
   let makeIt = function() {
-    if (debug) console.log('makeIt');
     // Set widgets.
     Bangle.loadWidgets(); // Load widgets.
     widget_utils.hide(); // Hide widgets. (FastLoading way).
@@ -120,7 +118,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // Main draw.
   let mainLoop = function() {
-    if (debug) console.log('mainLoop');
     // Set next minute update timer.
     mainLoopTimer();
     // Draw stuffs.
@@ -131,7 +128,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // Static graphical stuffs. 
   let drawTheme = function() {
-    if (debug) console.log('drawTheme');
     g.reset();
     g.clear();
     // Draw background.
@@ -162,7 +158,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // Main clock drawing.
   let drawClock = function() {
-    if (debug) console.log('drawClock');
     let date = new Date();
     let timeStr = locale.time(date,1);
     // Draw time.
@@ -177,7 +172,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // Date Info drawing.
   let drawDate = function() {
-    if (debug) console.log('drawDate');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let date = new Date();
     let dayStr = locale.dow(date, 1);
@@ -205,7 +199,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // HR Info drawing.
   // if ( Bangle.isCharging())
   let drawBpm = function() {
-    if (debug) console.log('drawBpm');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 90;
     let Y = 100;
@@ -235,7 +228,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // Steps Info drawing.
   let stepIntervallID;
   let drawSteps = function() {
-    if (debug) console.log('drawSteps');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 98;
     let Y = 135;
@@ -255,7 +247,6 @@ Graphics.prototype.setFontQuicksand = function() {
     Bangle.on('lcdPower', drawStepsOnLcdPower);
   }
   function setSteps() {
-    if (debug) console.log('setSteps');
     drawSteps();
     if ( stepIntervall > 0 ) // Real time mode.
       stepIntervallID = setInterval( drawSteps, stepIntervall); // Schedule next runs.
@@ -266,7 +257,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // BLE Info drawing.
   let drawBLE = function() {
-    if (debug) console.log('drawBLE');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 29;
     let Y = 6;
@@ -285,7 +275,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // Lock Screen drawing.
   let drawLock = function() {
-    if (debug) console.log('drawLock');
     let X = 7;
     let Y = 6;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+13, Y+17); // Clear. 
@@ -302,7 +291,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // *******************
   // GPS drawing.
   let drawGPS = function() {
-    if (debug) console.log('drawGPS');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 46;
     let Y = 6;
@@ -342,7 +330,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // Battery drawing.
   let battIntervallID;
   let drawBatt = function() {
-    if (debug) console.log('drawBatt');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     // If is charging...
     if ( Bangle.isCharging())
@@ -377,7 +364,6 @@ Graphics.prototype.setFontQuicksand = function() {
   // Memory drawing.
   let memIntervallID;
   let drawMemory = function() {
-    if (debug) console.log('drawMemory');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 131;
     let Y = 3;
@@ -410,7 +396,6 @@ Graphics.prototype.setFontQuicksand = function() {
     g.setPixel(X+11, Y+17).setPixel(X+11+maxBarPixels, Y+17);
   };
   let setMemory = function() {
-    if (debug) console.log('setMemory');
     if ( memIntervall == 0 ) memIntervall = 1000; // Real time mode. (1sec).
     memIntervallID = setInterval(drawMemory, memIntervall);
   };
@@ -421,7 +406,6 @@ Graphics.prototype.setFontQuicksand = function() {
   let barIntervallID;
   // Get barometer temperature and pressure values.
   let drawWeather = function(pressure) {
-    if (debug) console.log('drawWeather');
     let X = 5;
     let Y = 138;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+82, Y+14); // Clear. 
@@ -437,14 +421,12 @@ Graphics.prototype.setFontQuicksand = function() {
     g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('hPa', X+68, Y+10);
   };
   let getBarometer = function(e) {
-    if (debug) console.log('getBarometer');
     let barReadings = 8;
     if (barPressures.length > barReadings) barPressures.splice(barReadings);
     barPressures.unshift(e.pressure);
     // Shut down the barometer at barReadings.
     if (barPressures.length >= barReadings) {
       if ( barIntervall > 0 ) {
-        if (debug) console.log('releaseBarometer');
         Bangle.removeListener('pressure', getBarometer);
         Bangle.setBarometerPower(false, appName);
       }
@@ -457,13 +439,11 @@ Graphics.prototype.setFontQuicksand = function() {
     }
   };
   function initBarometer() {
-    if (debug) console.log('initBarometer');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     Bangle.setBarometerPower(true, appName);
     Bangle.on('pressure', getBarometer);
   }
   function setBarometer() {
-    if (debug) console.log('setBarometer');
     drawWeather(0); // First zero draw.
     if ( barIntervall > 0 ) {
       barIntervallID = setInterval( initBarometer, barIntervall); // Schedule next runs.
@@ -477,7 +457,6 @@ Graphics.prototype.setFontQuicksand = function() {
   Bangle.setUI({
     mode : "clock",
     remove : function() {
-      if (debug) console.log('Exit');
       // Clear clock main timeout.
       if (mainTimeoutID) clearTimeout(mainTimeoutID);
       mainTimeoutID = undefined;
