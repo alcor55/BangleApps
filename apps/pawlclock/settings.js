@@ -90,6 +90,18 @@
       format: v => intervalsLabels[v],
       onchange: v => save('stepIntervall', intervals[v].millisec)
     },
+      "Weather Min Pressure": {
+      value: settings.weatherMinPress,
+      min: 950, max: 1030,
+      format: v => v + " hPa",
+      onchange: v => save('weatherMinPress', v)
+    },
+    "Weather Max Pressure": {
+      value: settings.weatherMaxPress,
+      min: 960, max: 1050,
+      format: v => v + " hPa",
+      onchange: v => save('weatherMaxPress', v)
+    },
     'Debug': {
       value: settings.debug,
       format: v => v ? "On" : "Off",
