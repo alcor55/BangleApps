@@ -23,17 +23,19 @@
 
   // *******************
   // Custom font.
-  Graphics.prototype.setFontLato = function(scale) {
-    // Actual height 50 (54 - 5).
-    this.setFontCustom(
-      E.toString(heatshrink.decompress(atob('ADkD8AHFg/wA4sP/AHVD44HHgPALD0OA40+F43+H4wHGn/8A4v/L4sH/5PFj//CxkD/6eFCw9/GooWHh//wAWLgP/TgoWHn5rFCw41BMYqCHaRDKGgzLYKAJgFv//LIhQBAAI7DWgIABU4adBAAJTDn4HCVAaOCQQhvDAYQuBDYaxBgJEDh4HBgYzDPgUDIYYECA5DUDgIHBg4HEEgIHfF44/EA45HDL4xvHP46PHT5CvHX47PDGYcDb4zvHf5AA/AA9wA4yoDZYq/DXAgHDXYQHEXYQHEj4HHXYQHDn6UCA4d/e4sAXYYHCd4gHCXwbADA86DFA/4HGAGA3Db40HA4UDe40Hc4YHCh7nDA4UfA4X/A4U/A4b/Cv7vGX4UB/A+CZ4YaCgf9A4sH+IHCHwfjA4JWDj/DA4s/wYHFv4kCA4f+A4pKBA4sD/AHCG4R9BA4YCBj/gA4s/4AECN4R5BA4f/gf/Mgn///+A4wZBA4d//6JBA4c/VATHEVASUEEwIHEAAbnDAGbyCAAg+DgKwDA4S4DLQSlCSYQHCn4HDFAV/bAX/4ADFCYgbCh4zHZ4SlBR4iSEA46XCe4QHCDgJWCngHOnwHGvwHRG4iFBI4ppBA4f4OIRnCN4MD9+AO4f///v8CHCDoP/54CBS4f/44CBU4f/wYHBX4f/EQLHDh6gB/6jDZQaTDAEUcA40/A4xODYoYHGgYHGh4HGNIIuG74uGz4uGj4uF/gHFh/4A4sf+AHFn/AA4q0BA4kBVgIHEFwIHFFwIHFj7jBA4guBA4rjCA4YuCA4guCA4r0BAATgBA75SEa4wHvAEEBA40DUYIAEg4HDgZ0Bh67BXAQHCZYJMBA4UHA4KPCA4SXEAgQHL4IEBgIHC/AMCgP4CQUDFgIHoIQY3DA4wCEDggHFO4YHB/iHDCQX+gE/S4IHCOIP/U4IHCv6CBA4k/A4K1CEQKpBEIIHDh//HILSDTQK+CAAd/f64Amn4GFgLxCAAZfBSIIADN4heDP4YeDR4Z5CEwN/U4IABg4NBj6ADEwLHDIoQtBVgQuCHoIHDFwIHBe4QLB/14A4kH/i1BeQQuB/AHFn/wA4pLBA4guBwAHELoMAA4o9BA4Q3BgYFBJ4gCCA4pqBvxvDf4T2Bh4HCIIc/R4MCKISfBS4aQCU4gHDX4ioBY4paBNwQAD/6uDAAUOf4wAjO4QHNdQYHYmAHGW4gUEA4kPA4z7BA4v/A4qYBY4QHCh63CA4c/V4QHDV4Y6DV4YHCDwYHDDwYHDv7ODA4MBZwgHBcwL1DA4MfdogHBDwgHB+LtFgf3DwhMCDwgHCDwhcFA4geEA4IeFA4IeFd5AArj77EsCgB/gGCg5QBOQkf/6oB/77D//DA4JrCv//44HB4DkC//n/E/MgIcCRIMPA4X8RIUHegQCBFoL8DA4cBA4QaBv4HGvwHBTgMHHQM+HgIHhF44HFJ5RfGN45/Bz6NBP4SPHT4XnT4ivHX47PHgCQCb4bvIAHxdBMgRfD/58CKgf/WgIADP4JlFR4J1ET4QHCiACBQwQEBuC/CDIIHBX4QtBn+Aa4sfZ4bvCh+Ah4HGUAUHA4d/AgIHEa4QHDwJyCA4eDKIQHDx5pCA4bPDG4c/RIRPCjwuCA4aJBUwZnCRAcBP4SgE/+D/7+ET4ImDA4jIEX4KvFh7HGgbXGgF+f6oAggZeBSgShEb4RYCagQHGh5iDA5QXEE443HADoA=='))),
-      46,
-      atob("DhglJSUlJSUlJSUlEA=="),
-      64+(scale<<8)+(1<<16)
-    );
-    return this;
-  };
 
+
+Graphics.prototype.setFontLato = function() {
+  // Actual height 53 (56 - 4)
+  // 1 BPP
+  return this.setFontCustom(
+    E.toString(require('heatshrink').decompress(atob('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'))),
+    46,
+    atob("DRomJSUlJyQmJiUmDg=="),
+    67|65536
+  );
+}
+  
   // *******************
   // Load settings.
   let settings = Object.assign({
@@ -90,7 +92,6 @@
     setTimeout(Bangle.drawWidgets,0); // Draw widgets. (FastLoading way).
     // Draw all on the first run.
     drawTheme(); 
-    //drawUTC();
     drawBpm();
     setSteps();
     drawBLE();
@@ -145,36 +146,6 @@
     g.fillRect(w - 3, h - 2, w - 1, h - 2);
     g.fillRect(w - 2, h - 3, w - 1, h - 3);
     g.fillRect(w - 1, h - 4, w - 1, h - 5);
-    /* Lines.
-    g.setColor(drawingColor);
-    let bar0_x = 8;
-    let bar0_y = 30;
-    g.fillRect(bar0_x, bar0_y, bar0_x+160, bar0_y+1);
-    let bar1_x = 39;
-    let bar1_y = 32;
-    g.fillRect(bar1_x, bar1_y, bar1_x+1, bar1_y+35);
-    let bar2_x = 61;
-    let bar2_y = 95;
-    g.fillRect(bar2_x, bar2_y, bar2_x+1, bar2_y+20);
-    let bar3_x = 0;
-    let bar3_y = 95;
-    g.fillRect(bar3_x, bar3_y, bar3_x+60, bar3_y+1);
-    let bar4_x = 80;
-    let bar4_y = 38;
-    g.fillRect(bar4_x, bar4_y, bar4_x+1, bar4_y+51);
-    let bar5_x = 88;
-    let bar5_y = 59;
-    g.fillRect(bar5_x, bar5_y, bar5_x+87, bar5_y+1);
-    let bar6_x = 167;
-    let bar6_y = 61;
-    g.fillRect(bar6_x, bar6_y, bar6_x+1, bar6_y+29);
-    let bar7_x = 80;
-    let bar7_y = 89;
-    g.fillRect(bar7_x, bar7_y, bar7_x+88, bar7_y+1);
-    let bar8_x = 61;
-    let bar8_y = 115;
-    g.fillRect(bar8_x, bar8_y, bar8_x+114, bar8_y+1);
-    */
   };
 
   // *******************
@@ -184,25 +155,10 @@
     let date = new Date();
     let timeStr = locale.time(date,1);
     // Draw time.
-    let timeX = 8;
-    let timeY = 122;
-    g.reset().setColor(cleanColor).fillRect(timeX, timeY, timeX+159, timeY+48).setColor(drawingColor); // Clear.
-    g.setFontAlign(0, 0).setFontLato().drawString(timeStr, timeX+79, timeY+27);
-  };
-
-  // *******************
-  // Timezone Info drawing.
-  let drawUTC = function() {
-    if (debug) console.log('drawUTC');
-    if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let date = new Date();
-    let utc = date.getTimezoneOffset() / -60;
-    // Draw time.
-    let X = 8;
-    let Y = 104;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+49, Y+9).setColor(drawingColor); // Clear.
-    g.setFontAlign(-1, 0).setFont("Vector", 13).drawString('UTC', X, Y+5);
-    g.setFontAlign(0, 0).drawString((utc >= 0 ? "+" : "") + utc, X+40, Y+5);
+    let X = 5;
+    let Y = 34;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+165, Y+50).setColor(drawingColor); // Clear.
+    g.setFontAlign(0, 0).setFontLato().drawString(timeStr, X+83, Y+29);
   };
 
   // *******************
@@ -216,29 +172,20 @@
     let monthStr = locale.month(date, 1);
     let monthNum = ("0" + (date.getMonth() + 1)).slice(-2);
     let year = date.getFullYear();
+    let X = 5;
+    let Y = 96;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+30).setColor(drawingColor); // Clear. 
+    g.setColor(drawingColor).drawImage(atob("Dg6BADhz/////////wA9tvbbwA9tvbbwA/////A="), X, Y+15); // 14x14.
+    g.fillRect(X+45, Y+12, X+47, Y+30);
     // Draw day.
     g.setColor(drawingColor).setFontAlign(0, 0);
-    let dayX = 8;
-    let dayY = 38;
-    g.reset().setColor(cleanColor).fillRect(dayX, dayY, dayX+24, dayY+29).setColor(drawingColor); // Clear. 
-    g.setFont("Vector", 15).drawString(dayStr, dayX+1, dayY);
-    g.setFont("Vector", 20).drawString(dayNum, dayX+1, dayY+14);
+    let dayX = 22;
+    let dayY = 118;
+    g.setFont("Vector", 14).drawString(dayStr, X+30, Y+6);
+    g.setFont("Vector", 20).drawString(dayNum, X+30, Y+23);
     // Draw month.
-    let monthX = 48;
-    let monthY = 38;
-    g.reset().setColor(cleanColor).fillRect(monthX, monthY, monthX+24, monthY+29).setColor(drawingColor); // Clear.  
-    g.setFont("Vector", 15).drawString(monthStr, monthX, monthY);
-    g.setFont("Vector", 20).drawString(monthNum, monthX+2, monthY+14);
-    // Draw icon.
-    let icon_x = 9;
-    let icon_y = 74;
-    if (debug) { g.reset().setColor(cleanColor).fillRect(icon_x, icon_y, icon_x+13, icon_y+13); } // Clear. 
-    g.setColor(drawingColor).drawImage(atob("Dg6BADhz/////////wA9tvbbwA9tvbbwA/////A="), icon_x, icon_y); // 14x14.
-    // Draw year.
-    //let yearX = 32;
-    //let yearY = 75;
-    //g.reset().setColor(cleanColor).fillRect(yearX, yearY, yearX+40, yearY+12).setColor(drawingColor); // Clear. 
-    //g.setFont("Vector", 17).drawString(year, yearX, yearY-1);
+    g.setFont("Vector", 15).drawString(monthStr, X+65, Y+6);
+    g.setFont("Vector", 20).drawString(monthNum, X+65, Y+23);
   };
   
   // *******************
@@ -247,15 +194,15 @@
   let drawBpm = function() {
     if (debug) console.log('drawBpm');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let infoX = 88;
-    let infoY = 38;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY, infoX+80, infoY+14); // Clear.
-    g.setColor(drawingColor).setFontAlign(0, 0).setFont("Vector", 20).drawString(bp, infoX+40, infoY+9);
-    g.setFont("Vector", 9).drawString('BPM', infoX+72, infoY+8);
+    let X = 90;
+    let Y = 100;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+14); // Clear.
+    g.setColor(drawingColor).setFontAlign(0, 0).setFont("Vector", 20).drawString(bp, X+40, Y+9);
+    g.setFont("Vector", 9).drawString('BPM', X+72, Y+8);
     if (Bangle.isHRMOn()) {
       g.setColor(0xf800); // Red.
     }
-    g.drawImage(atob("DxKBAAAAAAAAAePH79/////////+//n/8f/B/wH8AfABwAAAAAA="), infoX, infoY-2); // 15x18.
+    g.drawImage(atob("DxKBAAAAAAAAAePH79/////////+//n/8f/B/wH8AfABwAAAAAA="), X, Y-2); // 15x18.
   };
   // HR update events.
   var hp = Bangle.setHRMPower;
@@ -277,15 +224,15 @@
   let drawSteps = function() {
     if (debug) console.log('drawSteps');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let infoX = 88;
-    let infoY = 66;
-    g.reset().setColor(cleanColor).fillRect(infoX, infoY, infoX+72, infoY+17); // Clear.
+    let X = 98;
+    let Y = 135;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+72, Y+17); // Clear.
     g.setColor(drawingColor);
-    g.drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), infoX, infoY); // 18x18.
+    g.drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X, Y); // 18x18.
     let steps = Bangle.getHealthStatus("day").steps;
     let fontSize = 21;
     if (steps>9999) fontSize = 16;
-    g.setFontAlign(0, 0).setFont("Vector", fontSize).drawString(steps, infoX+50, infoY+10);
+    g.setFontAlign(0, 0).setFont("Vector", fontSize).drawString(steps, X+50, Y+10);
   };
   // Steps update events.
   if (!offScreenUpd) { // Enable the lcdPower handler only if offScreenUpd is false.
@@ -309,7 +256,7 @@
     if (debug) console.log('drawBLE');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 29;
-    let Y = 4;
+    let Y = 6;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+9, Y+17); // Clear. 
     if (NRF.getSecurityStatus().connected) {
       g.setColor(0x001f); // Blue.
@@ -327,7 +274,7 @@
   let drawLock = function() {
     if (debug) console.log('drawLock');
     let X = 7;
-    let Y = 4;
+    let Y = 6;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+13, Y+17); // Clear. 
     g.setColor(drawingColor);
     if (Bangle.isLocked()) {
@@ -345,8 +292,9 @@
     if (debug) console.log('drawGPS');
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 46;
-    let Y = 4;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+17, Y+17); // Clear. 
+    let Y = 6;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+17, Y+17); // Clear.
+    g.setColor(drawingColor).drawImage(atob("EhKBADgAGwANYAKswNd4G7MD+GBsGAYMAwYAw2HZ/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
     // check if we need to update the widget periodically
     if (Bangle.isGPSOn() && intervalGPS === undefined) {
       intervalGPS = setInterval(
@@ -364,9 +312,9 @@
           g.setColor(0xf800); // Red ( ON without Fix ).
         }
     } else {
-      g.setColor(drawingColor); // ( GPS off ).
+      g.setColor(cleanColor); // ( GPS off ).
     }
-    g.drawImage(atob("EhKBADgAGwANYAKswNd4G78D/+Bv+Af8A/4A/2Hf/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
+    g.fillPoly([X+10,Y+4,X+13,Y+6,X+7,Y+13,X+5,Y+10]);
   };
   var intervalGPS;
   // GPS info update events.
@@ -389,10 +337,10 @@
     else
       changeInterval(battIntervallID, battIntervall);
     let X = 72;
-    let Y = 4;
+    let Y = 6;
     let battPixels = 18;
     g.reset().setColor(cleanColor).fillRect(X, Y+1, X+53, Y+16); // Clear.
-    const batteryVal = 50;//E.getBattery();
+    const batteryVal = E.getBattery();
     let xl = X+1+batteryVal*(battPixels)/100;
     g.setColor(0x8410).fillRect(X+2, Y+3, xl, Y+14); // Grey.
     g.setColor(drawingColor);
@@ -461,15 +409,17 @@
   // Get barometer temperature and pressure values.
   let drawWeather = function(pressure) {
     if (debug) console.log('drawWeather');
-    let X = 68;
-    let Y = 96;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+104, Y+13).setColor(drawingColor); // Clear. 
-
-    //g.reset().setColor(cleanColor).fillRect(X, Y+1, X+38, Y+16); // Clear. 
-    //g.setColor(drawingColor).drawImage(atob("BxCBAH399/ff3wAAcbc+P98c"), X, Y+1); // 7x16 chr
-
-    g.setFontAlign(1, 0).setFont("Vector", 16).drawString(pressure, X+89, Y+8);
-    g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('hPa', X+90, Y+7);
+    let X = 5;
+    let Y = 138;
+    g.reset().setColor(cleanColor).fillRect(X, Y, X+82, Y+14); // Clear. 
+    
+    g.setColor(drawingColor).drawImage(atob("Eg+BAAA+ABjADBg2Ax+AzC42C42Bw8DhuHDH3uADgAHAAOAAIAA="), X, Y); // 7x16 chr
+    //g.setColor(drawingColor).drawImage(atob("GQ6BAEEAADGGAAyGAAHyD4D+DGD/DBt/bAb+fgMfYYGPYEDJsABsMABsHHhgB/fg"), X, Y); // 7x16 chr
+    //g.setColor(drawingColor).drawImage(atob("Dg6BAEEBjDMhg+QP4H+N/5/7H+B/AnwYTMMYCCA="), X+2, Y); // 7x16 chr
+    
+    //g.setFontAlign(1, 0).setFont("Vector", 16).drawString(pressure, X+89, Y+8);
+    g.setFontAlign(1, 0).setFont("Vector", 16).drawString('1200', X+67, Y+9);
+    g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('hPa', X+68, Y+10);
   };
   let getBarometer = function(e) {
     if (debug) console.log('getBarometer');
