@@ -36,34 +36,39 @@
   // *******************
   // Load settings.
   let settings = Object.assign({
-    debug:         false, // Default false.
-    barIntervall: 600000, // Default 10min.
-    memIntervall:  60000, // Default 1min.
-    stepIntervall: 60000, // Default 1min.
-    battIntervall: 60000, // Default 1min.
-    offScreenUpd:   true, // Default true.
-    weatherMinPress:1005, // Default 1005.
-    weatherMaxPress:1020  // Default 1020.
-  },
-  storage.readJSON("pawl-clock.json", true) || {});
-
-  let offScreenUpd = (settings.debug) ? true : settings.offScreenUpd;
-  let weatherMinPress = settings.weatherMinPress;
-  let weatherMaxPress = settings.weatherMaxPress;
-  let barIntervall = settings.barIntervall;
-  let memIntervall = settings.memIntervall;
-  let stepIntervall = settings.stepIntervall;
-  let battIntervall = settings.battIntervall;
-  let debug = settings.debug;
+    debug:          false, // Default false.
+    barIntervall:   600000, // Default 10min.
+    memIntervall:   60000,  // Default 1min.
+    stepIntervall:  60000,  // Default 1min.
+    battIntervall:  60000,  // Default 1min.
+    offScreenUpd:   true,   // Default true.
+    weatherMinPress:1005,   // Default 1005.
+    weatherMaxPress:1020,   // Default 1020.
+    theme:          0,      // Default theme index.
+    bgColor:        0x001f, // Default white.
+    drwColor:       0x0000, // Default black.
+    txtColor:       0xffff, // Default black.
+    fillColor:      0x07e0  // Default green.
+  }, storage.readJSON("pawl-clock.json", true) || {});
   
   // *******************
-  // Colors definitios.
-  let s = require('Storage').readJSON('pawl-clock.json', 1) || {};
-  let bgColor = s.bgColor || 0x0000;
-  let drwColor = s.drwColor || 0xFFFF;
-  let txtColor = s.txtColor || 0x07FF;
-  let fillColor = s.fillColor || 0xF800;
-  let cleanColor = (debug) ? 0xf800 : settings.bgColor;
+  // Shortcut vars.
+  let offScreenUpd    = settings.debug ? true : settings.offScreenUpd;
+  let weatherMinPress = settings.weatherMinPress;
+  let weatherMaxPress = settings.weatherMaxPress;
+  let barIntervall    = settings.barIntervall;
+  let memIntervall    = settings.memIntervall;
+  let stepIntervall   = settings.stepIntervall;
+  let battIntervall   = settings.battIntervall;
+  let debug           = settings.debug;
+
+  // *******************
+  // Colors definitions.
+  let bgColor    = settings.bgColor;
+  let drwColor   = settings.drwColor;
+  let txtColor   = settings.txtColor;
+  let fillColor  = settings.fillColor;
+  let cleanColor = debug ? 0xf800 : bgColor;
 
   // *******************
   // Next minute mainLoop schedule.
@@ -125,7 +130,7 @@
     let X = 5;
     let Y = 34;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+165, Y+50).setColor(drwColor); // Clear.
-    g.setFontAlign(0, 0).setFontLato().drawString(timeStr, X+83, Y+29);
+    g.setFontAlign(0, 0).setColor(txtColor).setFontLato().drawString(timeStr, X+83, Y+29);
   };
 
   // *******************
@@ -140,15 +145,14 @@
     let X = 5;
     let Y = 96;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+30).setColor(drwColor); // Clear. 
-    g.setColor(drwColor).drawImage(atob("Dg6BADhz/////////wA9tvbbwA9tvbbwA/////A="), X, Y+15); // 14x14.
+    g.setColor(drwColor); // Draw img.
+    g.drawImage(atob("Dg6BADhz/////////wA9tvbbwA9tvbbwA/////A="), X, Y+15); // 14x14.
     g.fillRect(X+45, Y+12, X+47, Y+30);
+    g.setColor(txtColor).setFontAlign(0, 0); // Draw day/month.
     // Draw day.
-    g.setColor(drwColor).setFontAlign(0, 0);
-    g.setFont("Vector", 14).drawString(dayStr, X+30, Y+6);
-    g.setFont("Vector", 20).drawString(dayNum, X+30, Y+23);
+    g.setFont("Vector", 14).drawString(dayStr, X+30, Y+6).setFont("Vector", 20).drawString(dayNum, X+30, Y+23);
     // Draw month.
-    g.setFont("Vector", 15).drawString(monthStr, X+65, Y+6);
-    g.setFont("Vector", 20).drawString(monthNum, X+65, Y+23);
+    g.setFont("Vector", 15).drawString(monthStr, X+65, Y+6).setFont("Vector", 20).drawString(monthNum, X+65, Y+23);
   };
   
   // *******************
@@ -159,8 +163,8 @@
     let X = 90;
     let Y = 100;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+14); // Clear.
-    g.setColor(drwColor).setFontAlign(0, 0).setFont("Vector", 20).drawString(bp, X+40, Y+9);
-    g.setFont("Vector", 9).drawString('BPM', X+72, Y+8);
+    g.setColor(txtColor).setFontAlign(0, 0);
+    g.setFont("Vector", 20).drawString(bp, X+40, Y+9).setFont("Vector", 9).drawString('BPM', X+72, Y+8);
     if (Bangle.isHRMOn()) {
       g.setColor(0xf800); // Red.
     }
@@ -193,7 +197,7 @@
     let steps = Bangle.getHealthStatus("day").steps;
     let fontSize = 21;
     if (steps>9999) fontSize = 16;
-    g.setFontAlign(0, 0).setFont("Vector", fontSize).drawString(steps, X+50, Y+10);
+    g.setColor(txtColor).setFontAlign(0, 0).setFont("Vector", fontSize).drawString(steps, X+50, Y+10);
   };
   if (!offScreenUpd) { // Enable the lcdPower handler only if offScreenUpd is false.
     const drawStepsOnLcdPower = function(on) {
@@ -302,7 +306,7 @@
     let xl = X+1+batteryVal*(battPixels)/100;
     g.setColor(fillColor).fillRect(X+2, Y+3, xl, Y+14);
     require("Font8x16").add(Graphics);
-    g.setColor(drwColor).setFont("8x16").setFontAlign(-1,0);
+    g.setColor(txtColor).setFont("8x16").setFontAlign(-1,0);
     if (batteryVal != 100) batteryVal += '%';
     g.drawString(batteryVal, X+26, Y+10);
     if (Bangle.isCharging()) {
@@ -337,27 +341,18 @@
     g.setColor(cleanColor).drawImage(atob("BQaBAP7rX9Q="), X+3, Y+3); // Ram icon.
     g.setColor(cleanColor).drawImage(atob("BwaBADjLnxZHAA=="), X+2, Y+13); // HD icon.
     // main corner.
-    g.fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1);
-    g.fillRect(X, Y+21, X+1, Y+21).fillRect(X, Y+20, X, Y+21);
-    g.fillRect(X+44, Y+21, X+45, Y+21).fillRect(X+45, Y+20, X+45, Y+21);
-    g.fillRect(X+44, Y, X+45, Y).fillRect(X+45, Y, X+45, Y+1);
-    
+    g.fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1).fillRect(X, Y+21, X+1, Y+21).fillRect(X, Y+20, X, Y+21);
+    g.fillRect(X+44, Y+21, X+45, Y+21).fillRect(X+45, Y+20, X+45, Y+21).fillRect(X+44, Y, X+45, Y).fillRect(X+45, Y, X+45, Y+1);
     // values.
     require("Font6x8").add(Graphics);
-    g.setFontAlign(0,0).setFont("6x8");
-    g.drawString(ramUsedPercent, X+39, Y+6);
-    g.drawString(hdUsedPercent, X+39, Y+16);
+    g.setFontAlign(0,0).setFont("6x8").setColor(txtColor);
+    g.drawString(ramUsedPercent, X+39, Y+6).drawString(hdUsedPercent, X+39, Y+16);
     // bars.
     g.setColor(cleanColor).fillRect(X+11, Y+2, X+11+maxBarPixels, Y+9).fillRect(X+11, Y+12, X+11+maxBarPixels, Y+19); // Empty bars.
-    
-    g.setColor(0x07e0); // Fill bars.  
-    g.fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19);
-    
-    g.setColor(drwColor);//border
-    g.setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2);
-    g.setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
-    g.setPixel(X+11, Y+12).setPixel(X+11+maxBarPixels, Y+12);
-    g.setPixel(X+11, Y+19).setPixel(X+11+maxBarPixels, Y+19);
+    g.setColor(fillColor).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
+    // Borders.  
+    g.setColor(drwColor).setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2).setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
+    g.setPixel(X+11, Y+12).setPixel(X+11+maxBarPixels, Y+12).setPixel(X+11, Y+19).setPixel(X+11+maxBarPixels, Y+19);
   };
   let setMemory = function() {
     if ( memIntervall == 0 ) memIntervall = 1000; // Real time mode. (1sec).
@@ -381,8 +376,10 @@
     } else {
       g.setColor(drwColor).drawImage(atob("GQ6BAEEAADGGAAyGAAHyD4D+DGD/DBt/bAb+fgMfYYGPYEDJsABsMABsHHhgB/fg"), X, Y); //overcast 
     }
-    g.setFontAlign(1, 0).setFont("Vector", 16).drawString(pressure, X+67, Y+9);
-    g.setFont("Vector", 9).setFontAlign(-1, 0).drawString('hPa', X+68, Y+10);
+    g.setFontAlign(1, 0).setFont("Vector", 16).setColor(txtColor);
+    g.drawString(pressure, X+67, Y+9);
+    g.setFont("Vector", 9);
+    g.setFontAlign(-1, 0).drawString('hPa', X+68, Y+10);
   };
   let getBarometer = function(e) {
     let barReadings = 8;

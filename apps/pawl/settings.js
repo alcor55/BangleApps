@@ -2,21 +2,19 @@
   let settings = require('Storage').readJSON('pawl-clock.json', 1) || {};
 
   /*
-  const colors = [
-    { name: "Black", hex: 0x0000 },
-    { name: "White", hex: 0xffff },
-    { name: "Cyan", hex: 0x07ff },
-    { name: "Red", hex: 0xf800 },
-    { name: "Yellow", hex: 0xffe0 },
-    { name: "LimeGreen", hex: 0x87e0 },
-    { name: "Green", hex: 0x07e0 },
-    { name: "DarkGreen", hex: 0x0400 },
-    { name: "Torquoise", hex: 0x07f0 },
-    { name: "Magenta", hex: 0xf81f },
-    { name: "Pink", hex: 0xf810 },
-    { name: "Blue", hex: 0x001f },
-    { name: "DarkBlue", hex: 0x0010 }
-  ];
+  { name: "Black", hex: 0x0000 },
+  { name: "White", hex: 0xffff },
+  { name: "Cyan", hex: 0x07ff },
+  { name: "Red", hex: 0xf800 },
+  { name: "Yellow", hex: 0xffe0 },
+  { name: "LimeGreen", hex: 0x87e0 },
+  { name: "Green", hex: 0x07e0 },
+  { name: "DarkGreen", hex: 0x0400 },
+  { name: "Torquoise", hex: 0x07f0 },
+  { name: "Magenta", hex: 0xf81f },
+  { name: "Pink", hex: 0xf810 },
+  { name: "Blue", hex: 0x001f },
+  { name: "DarkBlue", hex: 0x0010 }
   */
 
   // Default values
@@ -50,17 +48,17 @@
   if (typeof settings.theme !== "number") settings.theme = 0;
   const themeLabels = themes.map(t => t.name);
 
-  function applyTheme(index) {
-    settings.theme = index;
-    settings.bgColor = themes[index].bg;
-    settings.drwColor = themes[index].drw;
-    settings.txtolor = themes[index].txt;
-    settings.fillColor = themes[index].fill;
-    require('Storage').writeJSON('pawl-clock.json', settings);
-  }
-
   function save(key, value) {
-    settings[key] = value;
+    if (key === "theme") {
+      const theme = themes[value];
+      settings.theme = value;
+      settings.bgColor = theme.bg;
+      settings.drwColor = theme.drw;
+      settings.txtColor = theme.txt;
+      settings.fillColor = theme.fill;
+    } else {
+      settings[key] = value;
+    }
     require('Storage').writeJSON('pawl-clock.json', settings);
   }
 
