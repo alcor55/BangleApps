@@ -26,6 +26,7 @@
   if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005;
   if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020;
   if (typeof settings.debug !== "boolean")        settings.debug = false;
+  if (typeof settings.theme !== "number") settings.theme = 0;
 
   // --- THEMES ---
   const themes = [
@@ -44,9 +45,6 @@
       fill: 0x07e0, // Green
     }
   ];
-
-  if (typeof settings.theme !== "number") settings.theme = 0;
-  const themeLabels = themes.map(t => t.name);
 
   function save(key, value, themeIndex) {
     if (themeIndex !== undefined) {

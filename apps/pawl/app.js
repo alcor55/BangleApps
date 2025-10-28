@@ -199,10 +199,10 @@
     if (steps>9999) fontSize = 16;
     g.setColor(txtColor).setFontAlign(0, 0).setFont("Vector", fontSize).drawString(steps, X+50, Y+10);
   };
+  let drawStepsOnLcdPower = function(on) {
+    if (on) drawSteps();
+  };
   if (!offScreenUpd) { // Enable the lcdPower handler only if offScreenUpd is false.
-    const drawStepsOnLcdPower = function(on) {
-      if (on) drawSteps();
-    };
     Bangle.on('lcdPower', drawStepsOnLcdPower);
   }
   const setSteps = function() {
