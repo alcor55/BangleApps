@@ -1,22 +1,7 @@
 (function(back) {
-  
   let settings = require('Storage').readJSON('pawl-clock.json', 1) || {};
-  
-  if (typeof settings.bgColor !== "number")       settings.bgColor = 0xffff;
-  if (typeof settings.offScreenUpd !== "boolean") settings.offScreenUpd = true;
-  if (typeof settings.barIntervall !== "number")  settings.barIntervall = 600000;
-  if (typeof settings.battIntervall !== "number") settings.battIntervall = 60000;
-  if (typeof settings.memIntervall !== "number")  settings.memIntervall = 60000;
-  if (typeof settings.stepIntervall !== "number") settings.stepIntervall = 60000;
-  if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005;
-  if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020;
-  if (typeof settings.debug !== "boolean")        settings.debug = false;
-  
-  function save(key, value) {
-    settings[key] = value;
-    require('Storage').writeJSON('pawl-clock.json', settings);
-  }
-  
+
+  /*
   const colors = [
     { name: "Black", hex: 0x0000 },
     { name: "White", hex: 0xffff },
@@ -32,11 +17,56 @@
     { name: "Blue", hex: 0x001f },
     { name: "DarkBlue", hex: 0x0010 }
   ];
-  const colorLabels = colors.map(c => c.name);
-  const colorCurrentIndex = colors.findIndex(c => c.hex === settings.bgColor);
+  */
 
+  // Default values
+  if (typeof settings.offScreenUpd !== "boolean") settings.offScreenUpd = true;
+  if (typeof settings.barIntervall !== "number")  settings.barIntervall = 600000;
+  if (typeof settings.battIntervall !== "number") settings.battIntervall = 60000;
+  if (typeof settings.memIntervall !== "number")  settings.memIntervall = 60000;
+  if (typeof settings.stepIntervall !== "number") settings.stepIntervall = 60000;
+  if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005;
+  if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020;
+  if (typeof settings.debug !== "boolean")        settings.debug = false;
+
+  // --- THEMES ---
+  const themes = [
+    {
+      name: "Light",
+      bg: 0xFFFF, // White
+      drw: 0x001f, // Blue
+      txt: 0x0000, // Black
+      fill: 0x07e0, // Green
+    },
+    {
+      name: "Dark",
+      bg: 0x001f, // Blue
+      drw: 0x0000, // Black
+      txt: 0xffff, // White
+      fill: 0x07e0, // Green
+    }
+  ];
+
+  if (typeof settings.theme !== "number") settings.theme = 0;
+  const themeLabels = themes.map(t => t.name);
+
+  function applyTheme(index) {
+    settings.theme = index;
+    settings.bgColor = themes[index].bg;
+    settings.drwColor = themes[index].drw;
+    settings.txtolor = themes[index].txt;
+    settings.fillColor = themes[index].fill;
+    require('Storage').writeJSON('pawl-clock.json', settings);
+  }
+
+  function save(key, value) {
+    settings[key] = value;
+    require('Storage').writeJSON('pawl-clock.json', settings);
+  }
+
+  // --- INTERVALS ---
   const intervals = [
-    { name: "Real Time", millisec: 0 },
+    { name: "Live", millisec: 0 },
     { name: "15 sec", millisec: 15000 },
     { name: "30 sec", millisec: 30000 },
     { name: "1 min", millisec: 60000 },
@@ -52,39 +82,40 @@
   const memIntervalIndex = getIntervalIndex(settings.memIntervall);
   const battIntervalIndex = getIntervalIndex(settings.battIntervall);
   const stepIntervalIndex = getIntervalIndex(settings.stepIntervall);
-  
+
+  // --- MENU ---
   E.showMenu({
     '': { 'title': 'PawlClock' },
     '< Back': back,
-    "BG Color": {
-      value: colorCurrentIndex >= 0 ? colorCurrentIndex : 0,
-      min: 0, max: colors.length - 1,
-      format: v => colorLabels[v],
-      onchange: v => save('bgColor', colors[v].hex)
+    "Theme": {
+      value: settings.theme,
+      min: 0, max: themes.length - 1,
+      format: v => themeLabels[v],
+      onchange: v => applyTheme(v)
     },
-    'Off screen uptate?': {
+    'Off screen update?': {
       value: settings.offScreenUpd,
       onchange: v => save('offScreenUpd', v)
     },
-    "Temp/Press upd. intervall": {
+    "Press upd. interval": {
       value: barIntervalIndex >= 0 ? barIntervalIndex : 0,
       min: 0, max: intervals.length - 1,
       format: v => intervalsLabels[v],
       onchange: v => save('barIntervall', intervals[v].millisec)
     },
-    "Memory upd. intervall": {
+    "Memory upd. interval": {
       value: memIntervalIndex >= 0 ? memIntervalIndex : 0,
       min: 0, max: intervals.length - 1,
       format: v => intervalsLabels[v],
       onchange: v => save('memIntervall', intervals[v].millisec)
     },
-    "Battery upd. intervall": {
+    "Battery upd. interval": {
       value: battIntervalIndex >= 0 ? battIntervalIndex : 0,
       min: 0, max: intervals.length - 1,
       format: v => intervalsLabels[v],
       onchange: v => save('battIntervall', intervals[v].millisec)
     },
-    "Step upd. intervall": {
+    "Step upd. interval": {
       value: stepIntervalIndex >= 0 ? stepIntervalIndex : 0,
       min: 0, max: intervals.length - 1,
       format: v => intervalsLabels[v],
@@ -107,4 +138,4 @@
       onchange: v => save('debug', v)
     }
   });
-})
+})();
