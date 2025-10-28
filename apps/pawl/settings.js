@@ -138,4 +138,4 @@
       onchange: v => save('debug', v)
     }
   });
-})();
+})
