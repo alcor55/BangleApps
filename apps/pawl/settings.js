@@ -48,14 +48,14 @@
   if (typeof settings.theme !== "number") settings.theme = 0;
   const themeLabels = themes.map(t => t.name);
 
-  function save(key, value) {
-    if (key === "theme") {
-      const theme = themes[value];
-      settings.theme = value;
-      settings.bgColor = theme.bg;
-      settings.drwColor = theme.drw;
-      settings.txtColor = theme.txt;
-      settings.fillColor = theme.fill;
+  function save(key, value, themeIndex) {
+    if (themeIndex !== undefined) {
+      let t = themes[themeIndex];
+      settings.theme = themeIndex;
+      settings.bgColor = t.bg;
+      settings.drwColor = t.drw;
+      settings.txtColor = t.txt;
+      settings.fillColor = t.fill;
     } else {
       settings[key] = value;
     }
@@ -87,9 +87,9 @@
     '< Back': back,
     "Theme": {
       value: settings.theme,
-      min: 0, max: themes.length - 1,
-      format: v => themeLabels[v],
-      onchange: v => applyTheme(v)
+      min: 0, max: themes.length-1,
+      format: i => themes[i].name,
+      onchange: i => save(null, null, i)
     },
     'Off screen update?': {
       value: settings.offScreenUpd,
