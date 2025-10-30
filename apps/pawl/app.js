@@ -324,7 +324,7 @@ Indigo        - 0x801f
     //g.reset().setColor(0xf800).fillRect(X, Y, X+99, Y+38); // Clear.
     g.setColor(0xffe0);
     const k = 0.415; // run 0.65 walk 0.415.
-    let steps = 45000; // Bangle.getHealthStatus("day").steps;
+    let steps = Bangle.getHealthStatus("day").steps;
     let stepLength = userHeight * k / 100;
     let distanceKm = (steps * stepLength) / 1000;
     let fontSize = 20;
