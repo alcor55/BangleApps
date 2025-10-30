@@ -1,28 +1,13 @@
 (function(back) {
   let settings = require('Storage').readJSON('pawl-clock.json', 1) || {};
 
-  /*
-  { name: "Black", hex: 0x0000 },
-  { name: "White", hex: 0xffff },
-  { name: "Cyan", hex: 0x07ff },
-  { name: "Red", hex: 0xf800 },
-  { name: "Yellow", hex: 0xffe0 },
-  { name: "LimeGreen", hex: 0x87e0 },
-  { name: "Green", hex: 0x07e0 },
-  { name: "DarkGreen", hex: 0x0400 },
-  { name: "Torquoise", hex: 0x07f0 },
-  { name: "Magenta", hex: 0xf81f },
-  { name: "Pink", hex: 0xf810 },
-  { name: "Blue", hex: 0x001f },
-  { name: "DarkBlue", hex: 0x0010 }
-  */
-
   // Default values
   if (typeof settings.offScreenUpd !== "boolean") settings.offScreenUpd = true;
   if (typeof settings.barIntervall !== "number")  settings.barIntervall = 600000;
   if (typeof settings.battIntervall !== "number") settings.battIntervall = 60000;
   if (typeof settings.memIntervall !== "number")  settings.memIntervall = 60000;
   if (typeof settings.stepIntervall !== "number") settings.stepIntervall = 60000;
+  if (typeof settings.userHeight !== "number")    settings.userHeight = 175;
   if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005;
   if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020;
   if (typeof settings.debug !== "boolean")        settings.debug = false;
@@ -33,15 +18,20 @@
     {
       name: "Light",
       bg: 0xFFFF, // White
-      drw: 0x001f, // Blue
+      drwA: 0x0000, // Black
+      drwB: 0x0000, // Black
+      drwC: 0x0000, // Black
       txt: 0x0000, // Black
       fill: 0x07e0, // Green
     },
     {
       name: "Dark",
-      bg: 0x001f, // Blue
-      drw: 0x0000, // Black
-      txt: 0xffff, // White
+      bg:   0x0000, // Black
+      drwA: 0xffe0, // Yellow
+      drwB: 0x0000, // Black
+      drwC: 0xffff, // White
+      txtA: 0xffff, // White
+      txtB: 0x0000, // Black
       fill: 0x07e0, // Green
     }
   ];
@@ -51,7 +41,9 @@
       let t = themes[themeIndex];
       settings.theme = themeIndex;
       settings.bgColor = t.bg;
-      settings.drwColor = t.drw;
+      settings.drwColorA = t.drwA;
+      settings.drwColorB = t.drwB;
+      settings.drwColorC = t.drwC;
       settings.txtColor = t.txt;
       settings.fillColor = t.fill;
     } else {
@@ -116,6 +108,13 @@
       min: 0, max: intervals.length - 1,
       format: v => intervalsLabels[v],
       onchange: v => save('stepIntervall', intervals[v].millisec)
+    },
+    "User Height": {
+      value: settings.userHeight,
+      min: 100, max: 220,
+      step: 1,
+      format: v => v + " cm",
+      onchange: v => save('userHeight', v)
     },
     "Weather Min Pressure": {
       value: settings.weatherMinPress,

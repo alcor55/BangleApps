@@ -5,23 +5,68 @@
 *    Font Converted with: https://www.espruino.com/Font+Converter (compression, 1bpp) 
 */
 
+
+/*
+===== Full Colors ====
+Black         - 0x0000
+White         - 0xffff
+Cyan          - 0x07ff
+Red           - 0xf800
+Yellow        - 0xffe0
+Green         - 0x07e0
+Magenta       - 0xf81f
+Blue          - 0x001f
+===== Mat Colors =====
+Dark Green    - 0x0400
+Lime Green    - 0x87e0
+Pink          - 0xf810
+Torquoise     - 0x07f0
+Dark Blue     - 0x0010
+Dark Grey     - 0x4208
+Grey          - 0x8410
+Light Grey    - 0xc618
+Light Red     - 0xfc10
+Light Green   - 0x87f0
+Light Blue    - 0x841f
+Light Yellow  - 0xfff0
+Light Magenta - 0xfc1f
+Light Cyan    - 0x87ff
+Dark Red      - 0x8000
+Dark Green    - 0x0400
+Dark Blue     - 0x0010
+Dark Yellow   - 0x8400
+Dark Magenta  - 0x8010
+Dark Cyan     - 0x0410
+Lime Green    - 0x87e0
+Royal Blue    - 0x041f
+Orange        - 0xfc00
+Indigo        - 0x801f
+*/
+
+
 { // Fast Loading ( Brackets to define the app scope ).
+  
   
   // *******************
   // Includes.
   // * Load the files by ide(run), not by coping with the file manager, otherwise the required modules where not loaded on the bangle storage.
+  //
   const locale = require('locale');
   const storage = require('Storage');
   const widget_utils = require("widget_utils");
 
+  
   // *******************
   // Globals.
+  //
   let appName = 'Pawl_Clock_v0.01';
   const w = g.getWidth(); // 176 Pixels.
   const h = g.getHeight(); // 176 Pixels.
 
+  
   // *******************
   // Custom font Lato 70 (https://www.espruino.com/Font+Converter).
+  //
   Graphics.prototype.setFontLato = function() {
     // Actual height 53 (56 - 4)
     // 1 BPP
@@ -33,8 +78,10 @@
     );
   };
   
+  
   // *******************
   // Load settings.
+  //
   let settings = Object.assign({
     debug:          false, // Default false.
     barIntervall:   600000, // Default 10min.
@@ -45,14 +92,21 @@
     weatherMinPress:1005,   // Default 1005.
     weatherMaxPress:1020,   // Default 1020.
     theme:          0,      // Default theme index.
-    bgColor:        0x001f, // Default white.
-    drwColor:       0x0000, // Default black.
-    txtColor:       0xffff, // Default black.
-    fillColor:      0x07e0  // Default green.
+    bgColor:        0x0000, // Default Black.
+    drwColorA:      0xffe0, // Default Yellow.
+    drwColorB:      0x0000, // Default Black.
+    drwColorC:      0xf800, // Default Black.
+    txtColorA:      0xffff, // Default White.
+    txtColorB:      0xffff, // Default Black.
+    fillColor:      0xf800, // Default Green.
+    userHeight:     175 // cm
+    
   }, storage.readJSON("pawl-clock.json", true) || {});
+
   
   // *******************
   // Shortcut vars.
+  //
   let offScreenUpd    = settings.debug ? true : settings.offScreenUpd;
   let weatherMinPress = settings.weatherMinPress;
   let weatherMaxPress = settings.weatherMaxPress;
@@ -61,17 +115,24 @@
   let stepIntervall   = settings.stepIntervall;
   let battIntervall   = settings.battIntervall;
   let debug           = settings.debug;
+  let userHeight      = settings.userHeight;
 
+  
   // *******************
   // Colors definitions.
+  //
   let bgColor    = settings.bgColor;
-  let drwColor   = settings.drwColor;
+  let drwColorA  = settings.drwColorA;
+  let drwColorB  = settings.drwColorB;
+  let drwColorC  = settings.drwColorC;
   let txtColor   = settings.txtColor;
   let fillColor  = settings.fillColor;
   let cleanColor = debug ? 0xf800 : bgColor;
 
+  
   // *******************
   // Next minute mainLoop schedule.
+  //
   let mainTimeoutID;
   let mainLoopTimer = function() {
     if (mainTimeoutID) clearTimeout(mainTimeoutID);
@@ -81,8 +142,10 @@
     }, 60000 - (Date.now() % 60000));
   };
 
+  
   // *******************
   // Main draw.
+  //
   let mainLoop = function() {
     // Set next minute update timer.
     mainLoopTimer();
@@ -91,13 +154,15 @@
     drawDate();
   };
 
+  
   // *******************
   // Static graphical stuffs. 
+  //
   let drawTheme = function() {
     g.reset();
     g.clear();
     // Draw background.
-    g.setColor(settings.bgColor).fillRect( 0, 0, w, h);
+    g.setColor(bgColor).fillRect( 0, 0, w, h);
     g.setColor(0x0000);
     // Draw up-left corner.
     g.fillRect(0, 0, 4, 0);
@@ -121,20 +186,80 @@
     g.fillRect(w - 1, h - 4, w - 1, h - 5);
   };
 
+  
+  // *******************
+  // Rounded Rectangles.
+  //
+  g.fillRoundedRect = function (x1, y1, x2, y2, r) {
+    r = Math.min(r, (x2 - x1) / 2, (y2 - y1) / 2);
+    // Corpo centrale
+    this.fillRect(x1 + r, y1, x2 - r, y2);
+    this.fillRect(x1, y1 + r, x2, y2 - r);
+    // Angoli arrotondati
+    this.fillCircle(x1 + r, y1 + r, r); // top-left
+    this.fillCircle(x2 - r, y1 + r, r); // top-right
+    this.fillCircle(x2 - r, y2 - r, r); // bottom-right
+    this.fillCircle(x1 + r, y2 - r, r); // bottom-left
+  };
+  
+  
+  // *******************
+  // Donut Chart drawing.
+  //
+  let drawDonutChart = function (cx, cy, rOuter, thickness, percent, gap, color, bgColor) {
+    const rInner = rOuter - thickness;
+    const halfGap = (gap * Math.PI / 360); // metà apertura simmetrica
+
+    // Angoli: 270° (in basso) ± metà gap
+    const start = (Math.PI * 1.5) + halfGap;   // inizia dopo il punto basso
+    const end   = (Math.PI * 1.5) - halfGap + 2*Math.PI; // termina prima del punto basso
+
+    const totalAngle = end - start;
+    const valueAngle = start + totalAngle * (percent / 100);
+
+    // --- Sfondo anello ---
+    g.setColor(bgColor);
+    g.fillCircle(cx, cy, rOuter);
+    g.setColor(0);
+    g.fillCircle(cx, cy, rInner);
+
+    // --- Parte di progresso ---
+    g.setColor(color);
+    const steps = 180;
+    for (let i = 0; i < steps; i++) {
+      const a1 = start + (totalAngle * i / steps);
+      const a2 = start + (totalAngle * (i + 1) / steps);
+      if (a1 >= valueAngle) break;
+      const x1i = cx + Math.cos(a1) * rInner;
+      const y1i = cy + Math.sin(a1) * rInner;
+      const x2i = cx + Math.cos(a2) * rInner;
+      const y2i = cy + Math.sin(a2) * rInner;
+      const x1o = cx + Math.cos(a1) * rOuter;
+      const y1o = cy + Math.sin(a1) * rOuter;
+      const x2o = cx + Math.cos(a2) * rOuter;
+      const y2o = cy + Math.sin(a2) * rOuter;
+      g.fillPoly([x1o, y1o, x2o, y2o, x2i, y2i, x1i, y1i]);
+    }
+  };
+
+
   // *******************
   // Main clock drawing.
+  //
   let drawClock = function() {
     let date = new Date();
     let timeStr = locale.time(date,1);
     // Draw time.
-    let X = 5;
-    let Y = 34;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+165, Y+50).setColor(drwColor); // Clear.
-    g.setFontAlign(0, 0).setColor(txtColor).setFontLato().drawString(timeStr, X+83, Y+29);
+    let X = 3;
+    let Y = 31;
+    g.reset().setColor(0x0000).fillRect(X, Y, X+169, Y+58); // Clear.
+    g.setFontAlign(0, 0).setColor(0xffff).setFontLato().drawString(timeStr, X+83, Y+33);
   };
 
+  
   // *******************
   // Date Info drawing.
+  //
   let drawDate = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let date = new Date();
@@ -142,31 +267,34 @@
     let dayNum = ("0" + date.getDate()).slice(-2);
     let monthStr = locale.month(date, 1);
     let monthNum = ("0" + (date.getMonth() + 1)).slice(-2);
-    let X = 5;
-    let Y = 96;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+30).setColor(drwColor); // Clear. 
-    g.setColor(drwColor); // Draw img.
-    g.drawImage(atob("Dg6BADhz/////////wA9tvbbwA9tvbbwA/////A="), X, Y+15); // 14x14.
-    g.fillRect(X+45, Y+12, X+47, Y+30);
-    g.setColor(txtColor).setFontAlign(0, 0); // Draw day/month.
+    let X = 111;
+    let Y = 103;
+    g.setColor(0xffe0).fillRoundedRect(X-4, Y-4, X+61, Y+32, 8);
+    g.setColor(0x0000).fillRoundedRect(X-2, Y-2, X+59, Y+30, 6);
+    g.reset().setColor(0x0000).fillRect(X, Y, X+57, Y+28).setColor(drwColorA); // Clear.
+    g.setColor(0xffff).fillRect(X+28, Y+2, X+29, Y+26); // Bar.
+    g.setFontAlign(0, 0); // Draw day/month.
     // Draw day.
-    g.setFont("Vector", 14).drawString(dayStr, X+30, Y+6).setFont("Vector", 20).drawString(dayNum, X+30, Y+23);
+    g.setFont("Vector", 11).drawString(dayStr, X+13, Y+6).setFont("Vector", 18).drawString(dayNum, X+13, Y+21);
     // Draw month.
-    g.setFont("Vector", 15).drawString(monthStr, X+65, Y+6).setFont("Vector", 20).drawString(monthNum, X+65, Y+23);
+    g.setFont("Vector", 11).drawString(monthStr, X+46, Y+6).setFont("Vector", 18).drawString(monthNum, X+46, Y+21);
   };
-  
+
   // *******************
   // HR Info drawing.
   // if ( Bangle.isCharging())
+  //
   let drawBpm = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 90;
-    let Y = 100;
+    let X = 110;
+    let Y = 144;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+14); // Clear.
-    g.setColor(txtColor).setFontAlign(0, 0);
-    g.setFont("Vector", 20).drawString(bp, X+40, Y+9).setFont("Vector", 9).drawString('BPM', X+72, Y+8);
+    g.setColor(0xffff).setFontAlign(0, 0);
+    g.setFont("Vector", 20).drawString(bp, X+40, Y+9).setFont("Vector", 9).drawString('BPM', X+32, Y+22);
     if (Bangle.isHRMOn()) {
       g.setColor(0xf800); // Red.
+    } else {
+      g.setColor(0xf810); // Pink.
     }
     g.drawImage(atob("DxKBAAAAAAAAAePH79/////////+//n/8f/B/wH8AfABwAAAAAA="), X, Y-2); // 15x18.
   };
@@ -184,20 +312,30 @@
   };
   Bangle.on('HRM', drawBpmOnHRM);
 
+  
   // *******************
   // Steps Info drawing.
+  //
   let stepIntervallID;
   let drawSteps = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 98;
-    let Y = 135;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+72, Y+17); // Clear.
-    g.setColor(drwColor);
-    g.drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X, Y); // 18x18.
-    let steps = Bangle.getHealthStatus("day").steps;
-    let fontSize = 21;
+    let X = 4;
+    let Y = 128;
+    //g.reset().setColor(0xf800).fillRect(X, Y, X+99, Y+38); // Clear.
+    g.setColor(0xffe0);
+    const k = 0.415; // run 0.65 walk 0.415.
+    let steps = 45000; // Bangle.getHealthStatus("day").steps;
+    let stepLength = userHeight * k / 100;
+    let distanceKm = (steps * stepLength) / 1000;
+    let fontSize = 20;
     if (steps>9999) fontSize = 16;
-    g.setColor(txtColor).setFontAlign(0, 0).setFont("Vector", fontSize).drawString(steps, X+50, Y+10);
+    g.setColor(0xffff).setFontAlign(-1, 0).setFont("Vector", fontSize).drawString(steps, X+46, Y+10);
+    g.setColor(0xffff).setFontAlign(-1, 0).setFont("Vector", 15).drawString(distanceKm.toFixed(1)+'km', X+46, Y+32);
+    g.setColor(0xffff).fillRect(X+46, Y+20, X+94, Y+21); // Bar.
+    // cx, cy, rOuter, thickness, percent, gap, color, bgColor
+    drawDonutChart(X+19, Y+19, 19, 4, 100, 40, 0xffe0, 0xffff);
+    g.drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+10, Y+10); // Shoe.
+    
   };
   let drawStepsOnLcdPower = function(on) {
     if (on) drawSteps();
@@ -216,8 +354,10 @@
     }
   };
 
+  
   // *******************
   // BLE Info drawing.
+  //
   let drawBLE = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 29;
@@ -226,7 +366,7 @@
     if (NRF.getSecurityStatus().connected) {
       g.setColor(0x001f); // Blue.
     } else {
-      g.setColor(drwColor);
+      g.setColor(0x07ff);
     }
     g.drawImage(atob("ChKBABgHAeB82753uPweD4fz7tnG4fB4HAYA"), X, Y); // 10x18.
   };
@@ -234,30 +374,33 @@
   NRF.on('connect', drawBLE);
   NRF.on('disconnect', drawBLE);
 
+  
   // *******************
   // Lock Screen drawing.
+  //
   let drawLock = function() {
     let X = 7;
     let Y = 6;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+13, Y+17); // Clear. 
-    g.setColor(drwColor);
     if (Bangle.isLocked()) {
-      g.drawImage(atob("DhKBAAAAHgH+DzwwMcDmAZgGYBv/////P/h/4f/P/h/////w"), X, Y); // 14x18.
+      g.setColor(0xf800).drawImage(atob("DhKBAAAAHgH+DzwwMcDmAZgGYBv/////P/h/4f/P/h/////w"), X, Y); // Lock.
     } else {
-      g.drawImage(atob("DhKBAB8B/gccODjgY4AHABwAOAP/////P/h/4f/P/h/////w"), X, Y); // 14x18.
+      g.setColor(0x07e0).drawImage(atob("DhKBAB8B/gccODjgY4AHABwAOAP/////P/h/4f/P/h/////w"), X, Y); // Unlock.
     }
   };
   // Lock Screen info update events.
   Bangle.on("lock", drawLock);
 
+  
   // *******************
   // GPS drawing.
+  //
   let drawGPS = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 46;
     let Y = 6;
     g.reset().setColor(cleanColor).fillRect(X, Y, X+17, Y+17); // Clear.
-    g.setColor(drwColor).drawImage(atob("EhKBADgAGwANYAKswNd4G7MD+GBsGAYMAwYAw2HZ/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
+    g.setColor(drwColorA).drawImage(atob("EhKBADgAGwANYAKswNd4G7MD+GBsGAYMAwYAw2HZ/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
     // check if we need to update the widget periodically
     if (Bangle.isGPSOn() && intervalGPS === undefined) {
       intervalGPS = setInterval(
@@ -288,8 +431,10 @@
     return isGPSon;
   };
 
+  
   // *******************
   // Battery drawing.
+  //
   let battIntervallID;
   let drawBatt = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
@@ -304,11 +449,12 @@
     g.reset().setColor(cleanColor).fillRect(X, Y+1, X+53, Y+16); // Clear.
     let batteryVal = E.getBattery();
     let xl = X+1+batteryVal*(battPixels)/100;
-    g.setColor(fillColor).fillRect(X+2, Y+3, xl, Y+14);
+    g.setColor(0xffff).fillRect(X+2, Y+3, xl, Y+14);
     require("Font8x16").add(Graphics);
-    g.setColor(txtColor).setFont("8x16").setFontAlign(-1,0);
+    g.setColor(0xffff).setFont("8x16").setFontAlign(-1,0);
     if (batteryVal != 100) batteryVal += '%';
     g.drawString(batteryVal, X+26, Y+10);
+    g.setColor(0xf800);
     if (Bangle.isCharging()) {
       g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAwDMDwD8PwD8/x794/z8A/D8A8D8AwDMAADMAADP///H//+AAAAA=="), X, Y); // 24x18 chr.
     } else {
@@ -322,8 +468,10 @@
     battIntervallID = setInterval(drawBatt, battIntervall);
   };
 
+  
   // *******************
   // Memory drawing.
+  //
   let memIntervallID;
   let drawMemory = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
@@ -336,22 +484,23 @@
     let hdUsedPercent = Math.round(((totalHDSpace - storage.getFree()) / totalHDSpace) * 100); 
     let ramBarPixels = X+11+ramUsedPercent*(maxBarPixels)/100;
     let hdBarPixels = X+11+hdUsedPercent*(maxBarPixels)/100;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+41, Y+19); // Clear.  
-    g.setColor(drwColor).fillRect(X, Y, X+45, Y+21); // Main block.
-    g.setColor(cleanColor).drawImage(atob("BQaBAP7rX9Q="), X+3, Y+3); // Ram icon.
-    g.setColor(cleanColor).drawImage(atob("BwaBADjLnxZHAA=="), X+2, Y+13); // HD icon.
+    g.reset().setColor(0x0000).fillRect(X, Y, X+41, Y+19); // Clear.  
+    
+    g.setColor(0x001f).fillRoundedRect(X, Y, X+45, Y+21, 7); // Main block.
+    g.setColor(0xffff).drawImage(atob("BQaBAP7rX9Q="), X+3, Y+3); // Ram icon.
+    g.setColor(0xffff).drawImage(atob("BwaBADjLnxZHAA=="), X+2, Y+13); // HD icon.
     // main corner.
-    g.fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1).fillRect(X, Y+21, X+1, Y+21).fillRect(X, Y+20, X, Y+21);
+    g.setColor(0x0000).fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1).fillRect(X, Y+21, X+1, Y+21).fillRect(X, Y+20, X, Y+21);
     g.fillRect(X+44, Y+21, X+45, Y+21).fillRect(X+45, Y+20, X+45, Y+21).fillRect(X+44, Y, X+45, Y).fillRect(X+45, Y, X+45, Y+1);
     // values.
     require("Font6x8").add(Graphics);
-    g.setFontAlign(0,0).setFont("6x8").setColor(txtColor);
+    g.setFontAlign(0,0).setFont("6x8").setColor(0xffff);
     g.drawString(ramUsedPercent, X+39, Y+6).drawString(hdUsedPercent, X+39, Y+16);
     // bars.
-    g.setColor(cleanColor).fillRect(X+11, Y+2, X+11+maxBarPixels, Y+9).fillRect(X+11, Y+12, X+11+maxBarPixels, Y+19); // Empty bars.
-    g.setColor(fillColor).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
+    g.setColor(0x0000).fillRect(X+11, Y+2, X+11+maxBarPixels, Y+9).fillRect(X+11, Y+12, X+11+maxBarPixels, Y+19); // Empty bars.
+    g.setColor(0xffff).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
     // Borders.  
-    g.setColor(drwColor).setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2).setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
+    g.setColor(0x001f).setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2).setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
     g.setPixel(X+11, Y+12).setPixel(X+11+maxBarPixels, Y+12).setPixel(X+11, Y+19).setPixel(X+11+maxBarPixels, Y+19);
   };
   let setMemory = function() {
@@ -359,27 +508,29 @@
     memIntervallID = setInterval(drawMemory, memIntervall);
   };
 
+  
   // *******************
   // Draw weather.
+  //
   let barPressures = [];
   let barIntervallID;
   // Get barometer temperature and pressure values.
   let drawWeather = function(pressure) {
-    let X = 5;
-    let Y = 138;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+82, Y+14); // Clear. 
-  
-    if (pressure > weatherMaxPress) {
-      g.setColor(drwColor).drawImage(atob("Dg6BAEEBjDMhg+QP4H+N/5/7H+B/AnwYTMMYCCA="), X+2, Y); //sun
-    } else if (pressure < weatherMinPress) {
-      g.setColor(drwColor).drawImage(atob("Eg+BAAA+ABjADBg2Ax+AzC42C42Bw8DhuHDH3uADgAHAAOAAIAA="), X, Y); //stormy
-    } else {
-      g.setColor(drwColor).drawImage(atob("GQ6BAEEAADGGAAyGAAHyD4D+DGD/DBt/bAb+fgMfYYGPYEDJsABsMABsHHhgB/fg"), X, Y); //overcast 
+    let X = 3;
+    let Y = 100;
+    g.setColor(0xffe0).fillRoundedRect(X, Y-1, X+100, Y+16, 7);
+    g.reset().setColor(0xffe0).fillRect(X+4, Y, X+95, Y+15); // Clear.
+    g.setColor(0x0000);
+    if (pressure > weatherMaxPress) { // Sun.
+      g.drawImage(atob("EhCBAADADDDDgHBzOAv0Af4Af4O/9+/9wf4Af4Av0BzODgHDDDADAA=="), X+6, Y);
+    } else if (pressure < weatherMinPress) { // Stormy.
+      g.drawImage(atob("Eg+BAAPgAZwAz4A37A33nf/9/57/7///n//AAADMzBmZgzMwREQ="), X+4, Y+1);
+    } else { // Overcast.
+      g.drawImage(atob("FxCBAAAGAAeMMB+A4GczgZ96A374B/3wN/v39+/vfz+C/38H/30H5mcH+AcAAYYAAwA="), X+4, Y);
     }
-    g.setFontAlign(1, 0).setFont("Vector", 16).setColor(txtColor);
-    g.drawString(pressure, X+67, Y+9);
-    g.setFont("Vector", 9);
-    g.setFontAlign(-1, 0).drawString('hPa', X+68, Y+10);
+    g.setFont("Vector", 16).setFontAlign(1, 0).drawString(pressure, X+74, Y+9);
+    require("Font6x8").add(Graphics);
+    g.setFont("6x8").setFontAlign(-1, 0).drawString('hPa', X+79, Y+8);
   };
   let getBarometer = function(e) {
     let barReadings = 8;
@@ -413,8 +564,10 @@
     }
   };
 
+  
   // *******************
   // Exit strategy handler.
+  //
   Bangle.setUI({
     mode : "clock",
     remove : function() {
@@ -455,8 +608,10 @@
     }
   });
 
+  
   // *******************
   // Run only on the first app execution.
+  //
   let makeIt = function() {
     // Set widgets.
     Bangle.loadWidgets(); // Load widgets.
