@@ -17,11 +17,11 @@
   const themes = [
     {
       name: "Light",
-      bg: 0xFFFF, // White
+      bg:   0xFFFF, // White
       drwA: 0x0000, // Black
       drwB: 0x0000, // Black
       drwC: 0x0000, // Black
-      txt: 0x0000, // Black
+      txt:  0x0000, // Black
       fill: 0x07e0, // Green
     },
     {

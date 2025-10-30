@@ -102,11 +102,7 @@ Indigo        - 0x801f
     userHeight:     175 // cm
     
   }, storage.readJSON("pawl-clock.json", true) || {});
-
-  
-  // *******************
-  // Shortcut vars.
-  //
+  // Various.
   let offScreenUpd    = settings.debug ? true : settings.offScreenUpd;
   let weatherMinPress = settings.weatherMinPress;
   let weatherMaxPress = settings.weatherMaxPress;
@@ -116,11 +112,7 @@ Indigo        - 0x801f
   let battIntervall   = settings.battIntervall;
   let debug           = settings.debug;
   let userHeight      = settings.userHeight;
-
-  
-  // *******************
   // Colors definitions.
-  //
   let bgColor    = settings.bgColor;
   let drwColorA  = settings.drwColorA;
   let drwColorB  = settings.drwColorB;
@@ -321,7 +313,7 @@ Indigo        - 0x801f
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 4;
     let Y = 128;
-    //g.reset().setColor(0xf800).fillRect(X, Y, X+99, Y+38); // Clear.
+    g.reset().setColor(0xf800).fillRect(X, Y, X+99, Y+38); // Clear.
     g.setColor(0xffe0);
     const k = 0.415; // run 0.65 walk 0.415.
     let steps = Bangle.getHealthStatus("day").steps;
