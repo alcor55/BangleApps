@@ -83,23 +83,20 @@ Indigo        - 0x801f
   // Load settings.
   //
   let settings = Object.assign({
-    debug:          false, // Default false.
-    barIntervall:   600000, // Default 10min.
-    memIntervall:   60000,  // Default 1min.
-    stepIntervall:  60000,  // Default 1min.
-    battIntervall:  60000,  // Default 1min.
-    offScreenUpd:   true,   // Default true.
-    weatherMinPress:1005,   // Default 1005.
-    weatherMaxPress:1020,   // Default 1020.
-    theme:          0,      // Default theme index.
-    bgColor:        0x0000, // Default Black.
-    drwColorA:      0xffe0, // Default Yellow.
-    drwColorB:      0x0000, // Default Black.
-    drwColorC:      0xf800, // Default Black.
-    txtColorA:      0xffff, // Default White.
-    txtColorB:      0xffff, // Default Black.
-    fillColor:      0xf800, // Default Green.
-    userHeight:     175 // cm
+    debug:           false, // Default false.
+    barIntervall:    600000, // Default 10min.
+    memIntervall:    60000,  // Default 1min.
+    stepIntervall:   60000,  // Default 1min.
+    battIntervall:   60000,  // Default 1min.
+    offScreenUpd:    true,   // Default true.
+    weatherMinPress: 1005,   // Default 1005.
+    weatherMaxPress: 1020,   // Default 1020.
+    theme:           0,      // Default theme index.
+    bgColor:         0x0000, // Default Black.
+    boxColor:        0xffe0, // Default Yellow.
+    txtColor:        0xffff, // Default White.
+    boxTxtColor:     0x0000, // Default Black.
+    userHeight:      175 // cm
     
   }, storage.readJSON("pawl-clock.json", true) || {});
   // Various.
@@ -113,15 +110,13 @@ Indigo        - 0x801f
   let debug           = settings.debug;
   let userHeight      = settings.userHeight;
   // Colors definitions.
-  let bgColor    = settings.bgColor;
-  let drwColorA  = settings.drwColorA;
-  let drwColorB  = settings.drwColorB;
-  let drwColorC  = settings.drwColorC;
-  let txtColor   = settings.txtColor;
-  let fillColor  = settings.fillColor;
-  let cleanColor = debug ? 0xf800 : bgColor;
+  let bgColor         = settings.bgColor;
+  let boxColor        = settings.boxColor;
+  let txtColor        = settings.txtColor;
+  let boxTxtColor     = settings.boxTxtColor;
+  let RED             = 0xf800;
 
-  
+
   // *******************
   // Next minute mainLoop schedule.
   //
@@ -244,11 +239,11 @@ Indigo        - 0x801f
     // Draw time.
     let X = 3;
     let Y = 31;
-    g.reset().setColor(0x0000).fillRect(X, Y, X+169, Y+58); // Clear.
-    g.setFontAlign(0, 0).setColor(0xffff).setFontLato().drawString(timeStr, X+83, Y+33);
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+169, Y+58); // Clear.
+    g.setFontAlign(0, 0).setColor(txtColor).setFontLato().drawString(timeStr, X+83, Y+33);
   };
 
-  
+
   // *******************
   // Date Info drawing.
   //
@@ -261,16 +256,17 @@ Indigo        - 0x801f
     let monthNum = ("0" + (date.getMonth() + 1)).slice(-2);
     let X = 111;
     let Y = 103;
-    g.setColor(0xffe0).fillRoundedRect(X-4, Y-4, X+61, Y+32, 8);
-    g.setColor(0x0000).fillRoundedRect(X-2, Y-2, X+59, Y+30, 6);
-    g.reset().setColor(0x0000).fillRect(X, Y, X+57, Y+28).setColor(drwColorA); // Clear.
-    g.setColor(0xffff).fillRect(X+28, Y+2, X+29, Y+26); // Bar.
+    g.setColor(boxColor).fillRoundedRect(X-4, Y-4, X+61, Y+32, 8);
+    g.setColor(bgColor).fillRoundedRect(X-2, Y-2, X+59, Y+30, 6);
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+57, Y+28); // Clear.
+    g.setColor(txtColor).fillRect(X+28, Y+2, X+29, Y+26); // Bar.
     g.setFontAlign(0, 0); // Draw day/month.
     // Draw day.
     g.setFont("Vector", 11).drawString(dayStr, X+13, Y+6).setFont("Vector", 18).drawString(dayNum, X+13, Y+21);
     // Draw month.
     g.setFont("Vector", 11).drawString(monthStr, X+46, Y+6).setFont("Vector", 18).drawString(monthNum, X+46, Y+21);
   };
+
 
   // *******************
   // HR Info drawing.
@@ -280,8 +276,8 @@ Indigo        - 0x801f
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 110;
     let Y = 144;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+80, Y+14); // Clear.
-    g.setColor(0xffff).setFontAlign(0, 0);
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+80, Y+14); // Clear.
+    g.setColor(txtColor).setFontAlign(0, 0);
     g.setFont("Vector", 20).drawString(bp, X+40, Y+9).setFont("Vector", 9).drawString('BPM', X+32, Y+22);
     if (Bangle.isHRMOn()) {
       g.setColor(0xf800); // Red.
@@ -304,7 +300,7 @@ Indigo        - 0x801f
   };
   Bangle.on('HRM', drawBpmOnHRM);
 
-  
+
   // *******************
   // Steps Info drawing.
   //
@@ -313,21 +309,20 @@ Indigo        - 0x801f
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 4;
     let Y = 128;
-    g.reset().setColor(0xf800).fillRect(X, Y, X+99, Y+38); // Clear.
-    g.setColor(0xffe0);
+    g.reset().setColor(debug ? RED : boxColor).fillRect(X, Y, X+99, Y+38); // Clear.
     const k = 0.415; // run 0.65 walk 0.415.
     let steps = Bangle.getHealthStatus("day").steps;
     let stepLength = userHeight * k / 100;
     let distanceKm = (steps * stepLength) / 1000;
     let fontSize = 20;
     if (steps>9999) fontSize = 16;
-    g.setColor(0xffff).setFontAlign(-1, 0).setFont("Vector", fontSize).drawString(steps, X+46, Y+10);
-    g.setColor(0xffff).setFontAlign(-1, 0).setFont("Vector", 15).drawString(distanceKm.toFixed(1)+'km', X+46, Y+32);
-    g.setColor(0xffff).fillRect(X+46, Y+20, X+94, Y+21); // Bar.
+    g.setColor(boxTxtColor).setFontAlign(-1, 0);
+    g.setFont("Vector", fontSize).drawString(steps, X+46, Y+10);
+    g.setFont("Vector", 15).drawString(distanceKm.toFixed(1)+'km', X+46, Y+32);
+    g.fillRect(X+46, Y+20, X+94, Y+21); // Bar.
     // cx, cy, rOuter, thickness, percent, gap, color, bgColor
     drawDonutChart(X+19, Y+19, 19, 4, 100, 40, 0xffe0, 0xffff);
-    g.drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+10, Y+10); // Shoe.
-    
+    g.setColor(boxColor).drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+10, Y+10); // Shoe.
   };
   let drawStepsOnLcdPower = function(on) {
     if (on) drawSteps();
@@ -346,7 +341,7 @@ Indigo        - 0x801f
     }
   };
 
-  
+
   // *******************
   // BLE Info drawing.
   //
@@ -354,11 +349,11 @@ Indigo        - 0x801f
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 29;
     let Y = 6;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+9, Y+17); // Clear. 
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+9, Y+17); // Clear. 
     if (NRF.getSecurityStatus().connected) {
       g.setColor(0x001f); // Blue.
     } else {
-      g.setColor(0x07ff);
+      g.setColor(txtColor);
     }
     g.drawImage(atob("ChKBABgHAeB82753uPweD4fz7tnG4fB4HAYA"), X, Y); // 10x18.
   };
@@ -366,24 +361,25 @@ Indigo        - 0x801f
   NRF.on('connect', drawBLE);
   NRF.on('disconnect', drawBLE);
 
-  
+
   // *******************
   // Lock Screen drawing.
   //
   let drawLock = function() {
     let X = 7;
     let Y = 6;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+13, Y+17); // Clear. 
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+13, Y+17); // Clear.
+    g.setColor(boxColor);
     if (Bangle.isLocked()) {
-      g.setColor(0xf800).drawImage(atob("DhKBAAAAHgH+DzwwMcDmAZgGYBv/////P/h/4f/P/h/////w"), X, Y); // Lock.
+      g.drawImage(atob("DhKBAAAAHgH+DzwwMcDmAZgGYBv/////P/h/4f/P/h/////w"), X, Y); // Lock.
     } else {
-      g.setColor(0x07e0).drawImage(atob("DhKBAB8B/gccODjgY4AHABwAOAP/////P/h/4f/P/h/////w"), X, Y); // Unlock.
+      g.drawImage(atob("DhKBAB8B/gccODjgY4AHABwAOAP/////P/h/4f/P/h/////w"), X, Y); // Unlock.
     }
   };
   // Lock Screen info update events.
   Bangle.on("lock", drawLock);
 
-  
+
   // *******************
   // GPS drawing.
   //
@@ -391,8 +387,8 @@ Indigo        - 0x801f
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 46;
     let Y = 6;
-    g.reset().setColor(cleanColor).fillRect(X, Y, X+17, Y+17); // Clear.
-    g.setColor(drwColorA).drawImage(atob("EhKBADgAGwANYAKswNd4G7MD+GBsGAYMAwYAw2HZ/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+17, Y+17); // Clear.
+    g.setColor(txtColor).drawImage(atob("EhKBADgAGwANYAKswNd4G7MD+GBsGAYMAwYAw2HZ/Hvdj26x41Q4awYNgAHA"), X, Y); // 17x18.
     // check if we need to update the widget periodically
     if (Bangle.isGPSOn() && intervalGPS === undefined) {
       intervalGPS = setInterval(
@@ -410,7 +406,7 @@ Indigo        - 0x801f
           g.setColor(0xf800); // Red ( ON without Fix ).
         }
     } else {
-      g.setColor(cleanColor); // ( GPS off ).
+      g.setColor(bgColor); // ( GPS off ).
     }
     g.fillPoly([X+10,Y+4,X+13,Y+6,X+7,Y+13,X+5,Y+10]);
   };
@@ -423,7 +419,7 @@ Indigo        - 0x801f
     return isGPSon;
   };
 
-  
+
   // *******************
   // Battery drawing.
   //
@@ -438,15 +434,15 @@ Indigo        - 0x801f
     let X = 72;
     let Y = 6;
     let battPixels = 18;
-    g.reset().setColor(cleanColor).fillRect(X, Y+1, X+53, Y+16); // Clear.
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y+1, X+53, Y+16); // Clear.
     let batteryVal = E.getBattery();
     let xl = X+1+batteryVal*(battPixels)/100;
-    g.setColor(0xffff).fillRect(X+2, Y+3, xl, Y+14);
+    g.setColor(txtColor).fillRect(X+2, Y+3, xl, Y+14);
     require("Font8x16").add(Graphics);
-    g.setColor(0xffff).setFont("8x16").setFontAlign(-1,0);
+    g.setFont("8x16").setFontAlign(-1,0);
     if (batteryVal != 100) batteryVal += '%';
     g.drawString(batteryVal, X+26, Y+10);
-    g.setColor(0xf800);
+    g.setColor(boxColor);
     if (Bangle.isCharging()) {
       g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAwDMDwD8PwD8/x794/z8A/D8A8D8AwDMAADMAADP///H//+AAAAA=="), X, Y); // 24x18 chr.
     } else {
@@ -460,7 +456,7 @@ Indigo        - 0x801f
     battIntervallID = setInterval(drawBatt, battIntervall);
   };
 
-  
+
   // *******************
   // Memory drawing.
   //
@@ -476,23 +472,21 @@ Indigo        - 0x801f
     let hdUsedPercent = Math.round(((totalHDSpace - storage.getFree()) / totalHDSpace) * 100); 
     let ramBarPixels = X+11+ramUsedPercent*(maxBarPixels)/100;
     let hdBarPixels = X+11+hdUsedPercent*(maxBarPixels)/100;
-    g.reset().setColor(0x0000).fillRect(X, Y, X+41, Y+19); // Clear.  
-    
-    g.setColor(0x001f).fillRoundedRect(X, Y, X+45, Y+21, 7); // Main block.
-    g.setColor(0xffff).drawImage(atob("BQaBAP7rX9Q="), X+3, Y+3); // Ram icon.
-    g.setColor(0xffff).drawImage(atob("BwaBADjLnxZHAA=="), X+2, Y+13); // HD icon.
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+41, Y+19); // Clear.  
+    g.setColor(boxColor).fillRoundedRect(X, Y, X+45, Y+21, 7); // Main block.
+    g.setColor(boxTxtColor).drawImage(atob("BQaBAP7rX9Q="), X+3, Y+3).drawImage(atob("BwaBADjLnxZHAA=="), X+2, Y+13); // Ram/HD icons.
     // main corner.
-    g.setColor(0x0000).fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1).fillRect(X, Y+21, X+1, Y+21).fillRect(X, Y+20, X, Y+21);
+    g.setColor(bgColor).fillRect(X, Y, X+1, Y).fillRect(X, Y, X, Y+1).fillRect(X, Y+21, X+1, Y+21).fillRect(X, Y+20, X, Y+21);
     g.fillRect(X+44, Y+21, X+45, Y+21).fillRect(X+45, Y+20, X+45, Y+21).fillRect(X+44, Y, X+45, Y).fillRect(X+45, Y, X+45, Y+1);
     // values.
     require("Font6x8").add(Graphics);
-    g.setFontAlign(0,0).setFont("6x8").setColor(0xffff);
+    g.setFontAlign(0,0).setFont("6x8").setColor(txtColor);
     g.drawString(ramUsedPercent, X+39, Y+6).drawString(hdUsedPercent, X+39, Y+16);
     // bars.
-    g.setColor(0x0000).fillRect(X+11, Y+2, X+11+maxBarPixels, Y+9).fillRect(X+11, Y+12, X+11+maxBarPixels, Y+19); // Empty bars.
-    g.setColor(0xffff).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
+    g.setColor(bgColor).fillRect(X+11, Y+2, X+11+maxBarPixels, Y+9).fillRect(X+11, Y+12, X+11+maxBarPixels, Y+19); // Empty bars.
+    g.setColor(txtColor).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
     // Borders.  
-    g.setColor(0x001f).setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2).setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
+    g.setColor(boxColor).setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2).setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
     g.setPixel(X+11, Y+12).setPixel(X+11+maxBarPixels, Y+12).setPixel(X+11, Y+19).setPixel(X+11+maxBarPixels, Y+19);
   };
   let setMemory = function() {
@@ -500,7 +494,7 @@ Indigo        - 0x801f
     memIntervallID = setInterval(drawMemory, memIntervall);
   };
 
-  
+
   // *******************
   // Draw weather.
   //
@@ -510,9 +504,9 @@ Indigo        - 0x801f
   let drawWeather = function(pressure) {
     let X = 3;
     let Y = 100;
-    g.setColor(0xffe0).fillRoundedRect(X, Y-1, X+100, Y+16, 7);
-    g.reset().setColor(0xffe0).fillRect(X+4, Y, X+95, Y+15); // Clear.
-    g.setColor(0x0000);
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X+4, Y, X+95, Y+15); // Clear.
+    g.setColor(boxColor).fillRoundedRect(X, Y-1, X+100, Y+16, 7);
+    g.setColor(boxTxtColor);
     if (pressure > weatherMaxPress) { // Sun.
       g.drawImage(atob("EhCBAADADDDDgHBzOAv0Af4Af4O/9+/9wf4Af4Av0BzODgHDDDADAA=="), X+6, Y);
     } else if (pressure < weatherMinPress) { // Stormy.

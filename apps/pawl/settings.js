@@ -17,22 +17,17 @@
   const themes = [
     {
       name: "Light",
-      bg:   0xFFFF, // White
-      drwA: 0x0000, // Black
-      drwB: 0x0000, // Black
-      drwC: 0x0000, // Black
-      txt:  0x0000, // Black
-      fill: 0x07e0, // Green
+      bgColor:     0xffff, // White
+      boxColor:    0xffe0, // Yellow
+      txtColor:    0xffff, // White
+      boxTxtColor: 0x0000, // Black
     },
     {
       name: "Dark",
-      bg:   0x0000, // Black
-      drwA: 0xffe0, // Yellow
-      drwB: 0x0000, // Black
-      drwC: 0xffff, // White
-      txtA: 0xffff, // White
-      txtB: 0x0000, // Black
-      fill: 0x07e0, // Green
+      bgColor:     0x0000, // Black
+      boxColor:    0xffe0, // Yellow
+      txtColor:    0x0000, // Black
+      boxTxtColor: 0xffff, // White
     }
   ];
 
@@ -40,12 +35,10 @@
     if (themeIndex !== undefined) {
       let t = themes[themeIndex];
       settings.theme = themeIndex;
-      settings.bgColor = t.bg;
-      settings.drwColorA = t.drwA;
-      settings.drwColorB = t.drwB;
-      settings.drwColorC = t.drwC;
-      settings.txtColor = t.txt;
-      settings.fillColor = t.fill;
+      settings.bgColor = t.bgColor;
+      settings.boxColor = t.boxColor;
+      settings.txtColor = t.txtColor;
+      settings.boxTxtColor = t.boxTxtColor;
     } else {
       settings[key] = value;
     }
