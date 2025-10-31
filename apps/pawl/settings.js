@@ -8,6 +8,7 @@
   if (typeof settings.memIntervall !== "number")  settings.memIntervall = 60000;
   if (typeof settings.stepIntervall !== "number") settings.stepIntervall = 60000;
   if (typeof settings.userHeight !== "number")    settings.userHeight = 175;
+  if (typeof settings.userStepGoal !== "number")    settings.userStepGoal = 5000;
   if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005;
   if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020;
   if (typeof settings.debug !== "boolean")        settings.debug = false;
@@ -108,6 +109,13 @@
       step: 1,
       format: v => v + " cm",
       onchange: v => save('userHeight', v)
+    },
+    "Step Goal": {
+      value: settings.userStepGoal,
+      min: 10000, max: 1000,
+      step: 1,
+      format: v => v + " step",
+      onchange: v => save('userStepGoal', v)
     },
     "Weather Min Pressure": {
       value: settings.weatherMinPress,

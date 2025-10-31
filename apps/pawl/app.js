@@ -1,5 +1,5 @@
 /*
-*    Pawl Clock v0.02
+*    Pawl Clock v0.01
 *    Icon drawn on https://www.pixilart.com/draw (must be white for color fill + transparent background).
 *    Imgs Converted with: https://www.espruino.com/Image+Converter (1 bit, transparency).
 *    Font Converted with: https://www.espruino.com/Font+Converter (compression, 1bpp) 
@@ -96,8 +96,8 @@ Indigo        - 0x801f
     boxColor:        0xffe0, // Default Yellow.
     txtColor:        0xffff, // Default White.
     boxTxtColor:     0x0000, // Default Black.
-    userHeight:      175 // cm
-    
+    userHeight:      175,    // cm.
+    userStepGoal:    5000   // steps.
   }, storage.readJSON("pawl-clock.json", true) || {});
   // Various.
   let offScreenUpd    = settings.debug ? true : settings.offScreenUpd;
@@ -109,6 +109,7 @@ Indigo        - 0x801f
   let battIntervall   = settings.battIntervall;
   let debug           = settings.debug;
   let userHeight      = settings.userHeight;
+  let userStepGoal    = settings.userStepGoal;
   // Colors definitions.
   let bgColor         = settings.bgColor;
   let boxColor        = settings.boxColor;
@@ -128,8 +129,8 @@ Indigo        - 0x801f
       mainLoop();
     }, 60000 - (Date.now() % 60000));
   };
-
   
+
   // *******************
   // Main draw.
   //
@@ -141,7 +142,52 @@ Indigo        - 0x801f
     drawDate();
   };
 
-  
+
+  // *******************
+  // Live mode. 
+  //
+  let longPressTime = 1500; // ms per long press
+  let pressTimer = null;
+  let pressing = false;
+  let longTriggered = false;
+  let screenUnlocked = true;
+  let liveOn = function() {
+    if (!screenUnlocked || longTriggered) return;
+    longTriggered = true;
+    console.log("liveOn");
+  };
+  let liveOff = function() {
+    if (!screenUnlocked) return;
+    console.log("liveOff");
+    longTriggered = false; // reset
+  };
+  let liveCtrl = function(e) {
+    if (!screenUnlocked) return;
+    if (e.b) {
+      // dito premuto
+      if (!pressing) {
+        pressing = true;
+        pressTimer = setTimeout(() => {
+          liveOn();
+          pressTimer = null;
+        }, longPressTime);
+      }
+    } else {
+      // dito rilasciato
+      pressing = false;
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+      // chiamalo solo se liveOn era stato attivato
+      if (longTriggered) {
+        liveOff();
+      }
+    }
+  };
+  Bangle.on("drag", liveCtrl);
+
+
   // *******************
   // Static graphical stuffs. 
   //
@@ -187,46 +233,6 @@ Indigo        - 0x801f
     this.fillCircle(x2 - r, y1 + r, r); // top-right
     this.fillCircle(x2 - r, y2 - r, r); // bottom-right
     this.fillCircle(x1 + r, y2 - r, r); // bottom-left
-  };
-  
-  
-  // *******************
-  // Donut Chart drawing.
-  //
-  let drawDonutChart = function (cx, cy, rOuter, thickness, percent, gap, color, bgColor) {
-    const rInner = rOuter - thickness;
-    const halfGap = (gap * Math.PI / 360); // metà apertura simmetrica
-
-    // Angoli: 270° (in basso) ± metà gap
-    const start = (Math.PI * 1.5) + halfGap;   // inizia dopo il punto basso
-    const end   = (Math.PI * 1.5) - halfGap + 2*Math.PI; // termina prima del punto basso
-
-    const totalAngle = end - start;
-    const valueAngle = start + totalAngle * (percent / 100);
-
-    // --- Sfondo anello ---
-    g.setColor(bgColor);
-    g.fillCircle(cx, cy, rOuter);
-    g.setColor(0);
-    g.fillCircle(cx, cy, rInner);
-
-    // --- Parte di progresso ---
-    g.setColor(color);
-    const steps = 180;
-    for (let i = 0; i < steps; i++) {
-      const a1 = start + (totalAngle * i / steps);
-      const a2 = start + (totalAngle * (i + 1) / steps);
-      if (a1 >= valueAngle) break;
-      const x1i = cx + Math.cos(a1) * rInner;
-      const y1i = cy + Math.sin(a1) * rInner;
-      const x2i = cx + Math.cos(a2) * rInner;
-      const y2i = cy + Math.sin(a2) * rInner;
-      const x1o = cx + Math.cos(a1) * rOuter;
-      const y1o = cy + Math.sin(a1) * rOuter;
-      const x2o = cx + Math.cos(a2) * rOuter;
-      const y2o = cy + Math.sin(a2) * rOuter;
-      g.fillPoly([x1o, y1o, x2o, y2o, x2i, y2i, x1i, y1i]);
-    }
   };
 
 
@@ -274,17 +280,24 @@ Indigo        - 0x801f
   //
   let drawBpm = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 110;
-    let Y = 144;
-    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+80, Y+14); // Clear.
-    g.setColor(txtColor).setFontAlign(0, 0);
-    g.setFont("Vector", 20).drawString(bp, X+40, Y+9).setFont("Vector", 9).drawString('BPM', X+32, Y+22);
-    if (Bangle.isHRMOn()) {
-      g.setColor(0xf800); // Red.
+    let X = 121;
+    let Y = 142;
+    g.reset().setColor(debug ? 0x07e0 : bgColor).fillRect(X, Y, X+51, Y+22); // Clear.
+    g.setColor(txtColor).setFontAlign(-1, 0);
+    let hr = bp;
+    if (hr>99) {
+      g.setFont("Vector", 18).drawString(hr, X+20, Y+9);
+      g.setFont("Vector", 8).drawString('HEART RATE', X+0, Y+21);
     } else {
-      g.setColor(0xf810); // Pink.
+      g.setFont("Vector", 24).drawString(hr, X+22, Y+13);
+      g.setFont("Vector", 7).drawString('BPM', X+1, Y+19);
     }
-    g.drawImage(atob("DxKBAAAAAAAAAePH79/////////+//n/8f/B/wH8AfABwAAAAAA="), X, Y-2); // 15x18.
+    g.setColor(RED);
+    if (Bangle.isHRMOn()) {
+      g.drawImage(atob("DxKBAAAAAAAAAePH79/////////+//n/8f/B/wH8AfABwAAAAAA="), X, Y-2);
+    } else {
+      g.drawImage(atob("DxKBAAAAAAAAAePH79z58OHgA+AOwBnAccHBxwHcAfABwAAAAAA="), X, Y-2);
+    }
   };
   // HR update events.
   var hp = Bangle.setHRMPower;
@@ -302,6 +315,39 @@ Indigo        - 0x801f
 
 
   // *******************
+  // Donut Chart drawing.
+  //
+  let drawDonutChart = function(cx, cy, rOuter, thickness, value, maxValue, color, bgColor) {
+    const rInner = rOuter - thickness;
+    const start = Math.PI * 1.5;         // parte dal basso
+    const totalAngle = 2 * Math.PI;      // cerchio completo
+    const valueAngle = start + totalAngle * (value / maxValue);
+    // --- Sfondo anello ---
+    g.setColor(bgColor);
+    g.fillCircle(cx, cy, rOuter);
+    g.setColor(0);
+    g.fillCircle(cx, cy, rInner);
+    // --- Parte di progresso ---
+    g.setColor(color);
+    const steps = 200;
+    for (let i = 0; i < steps; i++) {
+      const a1 = start + (totalAngle * i / steps);
+      const a2 = start + (totalAngle * (i + 1) / steps);
+      if (a1 >= valueAngle) break;
+      const x1i = cx + Math.cos(a1) * rInner;
+      const y1i = cy + Math.sin(a1) * rInner;
+      const x2i = cx + Math.cos(a2) * rInner;
+      const y2i = cy + Math.sin(a2) * rInner;
+      const x1o = cx + Math.cos(a1) * rOuter;
+      const y1o = cy + Math.sin(a1) * rOuter;
+      const x2o = cx + Math.cos(a2) * rOuter;
+      const y2o = cy + Math.sin(a2) * rOuter;
+      g.fillPoly([x1o, y1o, x2o, y2o, x2i, y2i, x1i, y1i]);
+    }
+  };
+
+
+  // *******************
   // Steps Info drawing.
   //
   let stepIntervallID;
@@ -309,19 +355,18 @@ Indigo        - 0x801f
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 4;
     let Y = 128;
-    g.reset().setColor(debug ? RED : boxColor).fillRect(X, Y, X+99, Y+38); // Clear.
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+99, Y+38); // Clear.
     const k = 0.415; // run 0.65 walk 0.415.
     let steps = Bangle.getHealthStatus("day").steps;
     let stepLength = userHeight * k / 100;
     let distanceKm = (steps * stepLength) / 1000;
     let fontSize = 20;
     if (steps>9999) fontSize = 16;
-    g.setColor(boxTxtColor).setFontAlign(-1, 0);
+    g.setColor(txtColor).setFontAlign(-1, 0);
     g.setFont("Vector", fontSize).drawString(steps, X+46, Y+10);
     g.setFont("Vector", 15).drawString(distanceKm.toFixed(1)+'km', X+46, Y+32);
     g.fillRect(X+46, Y+20, X+94, Y+21); // Bar.
-    // cx, cy, rOuter, thickness, percent, gap, color, bgColor
-    drawDonutChart(X+19, Y+19, 19, 4, 100, 40, 0xffe0, 0xffff);
+    drawDonutChart(X+19, Y+19, 16, 4, steps, userStepGoal, RED, 0xffff);
     g.setColor(boxColor).drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+10, Y+10); // Shoe.
   };
   let drawStepsOnLcdPower = function(on) {
@@ -437,11 +482,11 @@ Indigo        - 0x801f
     g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y+1, X+53, Y+16); // Clear.
     let batteryVal = E.getBattery();
     let xl = X+1+batteryVal*(battPixels)/100;
-    g.setColor(txtColor).fillRect(X+2, Y+3, xl, Y+14);
+    g.setColor(RED).fillRect(X+2, Y+3, xl, Y+14); // Fill bar.
     require("Font8x16").add(Graphics);
     g.setFont("8x16").setFontAlign(-1,0);
     if (batteryVal != 100) batteryVal += '%';
-    g.drawString(batteryVal, X+26, Y+10);
+    g.setColor(txtColor).drawString(batteryVal, X+26, Y+10);
     g.setColor(boxColor);
     if (Bangle.isCharging()) {
       g.drawImage(atob("GBKBAAAAAH//+P///MAADMAADMAwDMDwD8PwD8/x794/z8A/D8A8D8AwDMAADMAADP///H//+AAAAA=="), X, Y); // 24x18 chr.
@@ -480,11 +525,11 @@ Indigo        - 0x801f
     g.fillRect(X+44, Y+21, X+45, Y+21).fillRect(X+45, Y+20, X+45, Y+21).fillRect(X+44, Y, X+45, Y).fillRect(X+45, Y, X+45, Y+1);
     // values.
     require("Font6x8").add(Graphics);
-    g.setFontAlign(0,0).setFont("6x8").setColor(txtColor);
+    g.setFontAlign(0,0).setFont("6x8").setColor(boxTxtColor);
     g.drawString(ramUsedPercent, X+39, Y+6).drawString(hdUsedPercent, X+39, Y+16);
     // bars.
     g.setColor(bgColor).fillRect(X+11, Y+2, X+11+maxBarPixels, Y+9).fillRect(X+11, Y+12, X+11+maxBarPixels, Y+19); // Empty bars.
-    g.setColor(txtColor).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
+    g.setColor(RED).fillRect(X+11, Y+2, ramBarPixels, Y+9).fillRect(X+11, Y+12, hdBarPixels, Y+19); // Fill bars.  
     // Borders.  
     g.setColor(boxColor).setPixel(X+11, Y+2).setPixel(X+11+maxBarPixels, Y+2).setPixel(X+11, Y+9).setPixel(X+11+maxBarPixels, Y+9);
     g.setPixel(X+11, Y+12).setPixel(X+11+maxBarPixels, Y+12).setPixel(X+11, Y+19).setPixel(X+11+maxBarPixels, Y+19);
@@ -580,6 +625,7 @@ Indigo        - 0x801f
       if (!offScreenUpd) { Bangle.removeListener('lcdPower', drawStepsOnLcdPower); }
       Bangle.removeListener('lock', drawLock);
       Bangle.removeListener('HRM', drawBpmOnHRM);
+      Bangle.removeListener('drag', liveCtrl);
       Bangle.removeListener('pressure', getBarometer);
       NRF.removeListener('connect', drawBLE);
       NRF.removeListener('disconnect', drawBLE);
