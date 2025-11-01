@@ -372,7 +372,7 @@ Indigo        - 0x801f
     const k = 0.415; // run 0.65 walk 0.415.
     let steps = 1999;//Bangle.getHealthStatus("day").steps;
     let stepLength = userHeight * k / 100;
-    let distanceKm = 99;//(steps * stepLength) / 1000;
+    let distanceKm = (steps * stepLength) / 1000;
     let fontSize = 18;
     if (steps>9999) fontSize = 16;
     g.setColor(txtColor).setFontAlign(-1, 0);
