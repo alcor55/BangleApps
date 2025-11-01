@@ -20,15 +20,15 @@
       name: "Light",
       bgColor:     0xffff, // White
       boxColor:    0x001f, // Blue
-      txtColor:    0xffff, // White
-      boxTxtColor: 0x0000, // Black
+      txtColor:    0x0000, // Black
+      boxTxtColor: 0xffff, // White
     },
     {
       name: "Dark",
       bgColor:     0x0000, // Black
       boxColor:    0xffe0, // Yellow
-      txtColor:    0x0000, // Black
-      boxTxtColor: 0xffff, // White
+      txtColor:    0xffff, // White
+      boxTxtColor: 0x0000, // Black
     }
   ];
 
