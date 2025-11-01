@@ -3,7 +3,7 @@
 
   // Default values
   if (typeof settings.offScreenUpd !== "boolean") settings.offScreenUpd = true;
-  if (typeof settings.barIntervall !== "number")  settings.barIntervall = 600000;
+  if (typeof settings.barIntervall !== "number")  settings.barIntervall = 60000;
   if (typeof settings.battIntervall !== "number") settings.battIntervall = 60000;
   if (typeof settings.memIntervall !== "number")  settings.memIntervall = 60000;
   if (typeof settings.stepIntervall !== "number") settings.stepIntervall = 60000;
@@ -12,7 +12,7 @@
   if (typeof settings.weatherMinPress !== "number") settings.weatherMinPress = 1005;
   if (typeof settings.weatherMaxPress !== "number") settings.weatherMaxPress = 1020;
   if (typeof settings.debug !== "boolean")        settings.debug = false;
-  if (typeof settings.theme !== "number") settings.theme = 0;
+  if (typeof settings.theme !== "number") settings.theme = 1;
 
   // --- THEMES ---
   const themes = [
@@ -21,14 +21,14 @@
       bgColor:     0xffff, // White
       boxColor:    0x001f, // Blue
       txtColor:    0x0000, // Black
-      boxTxtColor: 0xffff, // White
+      boxTxtColor: 0xffff  // White
     },
     {
       name: "Dark",
       bgColor:     0x0000, // Black
       boxColor:    0xffe0, // Yellow
       txtColor:    0xffff, // White
-      boxTxtColor: 0x0000, // Black
+      boxTxtColor: 0x0000  // Black
     }
   ];
 

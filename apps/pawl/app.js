@@ -84,7 +84,7 @@ Indigo        - 0x801f
   //
   let settings = Object.assign({
     debug:           false, // Default false.
-    barIntervall:    600000, // Default 10min.
+    barIntervall:    60000,  // Default 1min.
     memIntervall:    60000,  // Default 1min.
     stepIntervall:   60000,  // Default 1min.
     battIntervall:   60000,  // Default 1min.
