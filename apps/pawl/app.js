@@ -244,7 +244,7 @@ Indigo        - 0x801f
     let timeStr = locale.time(date,1);
     // Draw time.
     let X = 3;
-    let Y = 31;
+    let Y = 29;
     g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+169, Y+58); // Clear.
     g.setFontAlign(0, 0).setColor(txtColor).setFontLato70().drawString(timeStr, X+83, Y+33);
   };
@@ -261,7 +261,7 @@ Indigo        - 0x801f
     let monthStr = locale.month(date, 1);
     let monthNum = ("0" + (date.getMonth() + 1)).slice(-2);
     let X = 108;
-    let Y = 101;
+    let Y = 99;
     g.setColor(boxColor).fillRoundedRect(X-4, Y-4, X+62, Y+40, 8);
     g.fillRect(X-6, Y-4, X, Y+13); // RoundedRect corner.
     g.setColor(bgColor).fillRoundedRect(X-2, Y+8, X+60, Y+38, 6);
@@ -293,8 +293,8 @@ Indigo        - 0x801f
   //
   let drawBpm = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 118;
-    let Y = 147;
+    let X = 116;
+    let Y = 146;
     g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+51, Y+22); // Clear.
     g.setColor(txtColor).setFontAlign(-1, 0);
     let hr = (!bp || isNaN(bp)) ? '--' : bp;
@@ -367,17 +367,17 @@ Indigo        - 0x801f
   let drawSteps = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
     let X = 5;
-    let Y = 126;
-    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+100, Y+38); // Clear.
+    let Y = 125;
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+98, Y+38); // Clear.
     const k = 0.415; // run 0.65 walk 0.415.
-    let steps = 1999;//Bangle.getHealthStatus("day").steps;
+    let steps = Bangle.getHealthStatus("day").steps;
     let stepLength = userHeight * k / 100;
     let distanceKm = (steps * stepLength) / 1000;
     let fontSize = 18;
     if (steps>9999) fontSize = 16;
     g.setColor(txtColor).setFontAlign(-1, 0);
     g.setFont("Vector", fontSize).drawString(steps, X+45, Y+10);
-    g.setFont("Vector", 16).drawString(distanceKm.toFixed(1)+'km', X+45, Y+32);
+    g.setFont("Vector", 15).drawString(distanceKm.toFixed(1)+'km', X+45, Y+32);
     g.fillRect(X+45, Y+20, X+87, Y+21); // Bar.
     drawDonutChart(X+19, Y+19, 19, 6, steps, userStepGoal, RED, 0xffff);
     g.setColor(boxColor).drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+11, Y+11); // Shoe.
@@ -561,7 +561,7 @@ Indigo        - 0x801f
   // Get barometer temperature and pressure values.
   let drawWeather = function(pressure) {
     let X = 5;
-    let Y = 98;
+    let Y = 96;
     g.setColor(boxColor).fillRoundedRect(X, Y-1, X+100, Y+16, 7);
     g.reset().setColor(debug ? RED : boxColor).fillRect(X+4, Y, X+95, Y+15); // Clear.
     g.setColor(boxTxtColor);
