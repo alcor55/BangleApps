@@ -293,11 +293,11 @@ Indigo        - 0x801f
   //
   let drawBpm = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 116;
+    let X = 112;
     let Y = 146;
     g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+51, Y+22); // Clear.
     g.setColor(txtColor).setFontAlign(-1, 0);
-    let hr = (!bp || isNaN(bp)) ? '--' : bp;
+    let hr = 77;//(!bp || isNaN(bp)) ? '--' : bp;
     if (typeof hr === "number" && hr > 99) {
       g.setFont("Vector", 18).drawString(hr, X+20, Y+9);
       g.setFont("Vector", 8).drawString('HEART RATE', X+0, Y+21);
