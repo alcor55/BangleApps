@@ -19,7 +19,7 @@
     {
       name: "Light",
       bgColor:     0xffff, // White
-      boxColor:    0xffe0, // Yellow
+      boxColor:    0x001f, // Blue
       txtColor:    0xffff, // White
       boxTxtColor: 0x0000, // Black
     },

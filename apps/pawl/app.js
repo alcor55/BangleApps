@@ -67,7 +67,7 @@ Indigo        - 0x801f
   // *******************
   // Custom font Lato 70 (https://www.espruino.com/Font+Converter).
   //
-  Graphics.prototype.setFontLato = function() {
+  Graphics.prototype.setFontLato70 = function() {
     // Actual height 53 (56 - 4)
     // 1 BPP
     return this.setFontCustom(
@@ -246,7 +246,7 @@ Indigo        - 0x801f
     let X = 3;
     let Y = 31;
     g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+169, Y+58); // Clear.
-    g.setFontAlign(0, 0).setColor(txtColor).setFontLato().drawString(timeStr, X+83, Y+33);
+    g.setFontAlign(0, 0).setColor(txtColor).setFontLato70().drawString(timeStr, X+83, Y+33);
   };
 
 
@@ -260,17 +260,30 @@ Indigo        - 0x801f
     let dayNum = ("0" + date.getDate()).slice(-2);
     let monthStr = locale.month(date, 1);
     let monthNum = ("0" + (date.getMonth() + 1)).slice(-2);
-    let X = 111;
-    let Y = 103;
-    g.setColor(boxColor).fillRoundedRect(X-4, Y-4, X+61, Y+32, 8);
-    g.setColor(bgColor).fillRoundedRect(X-2, Y-2, X+59, Y+30, 6);
-    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+57, Y+28); // Clear.
-    g.setColor(txtColor).fillRect(X+28, Y+2, X+29, Y+26); // Bar.
+    let X = 108;
+    let Y = 101;
+    g.setColor(boxColor).fillRoundedRect(X-4, Y-4, X+62, Y+40, 8);
+    g.fillRect(X-6, Y-4, X, Y+13); // RoundedRect corner.
+    g.setColor(bgColor).fillRoundedRect(X-2, Y+8, X+60, Y+38, 6);
+    let Xi = X-6;
+    let Yi = Y-21;
+    for (let i = 0; i < 9; i++) {
+      let dx = i * 11;
+      g.fillPoly([
+        Xi + 9 + dx, Yi + 27,
+        Xi + 15 + dx, Yi + 27,
+        Xi + 8 + dx, Yi + 19,
+        Xi + 2 + dx, Yi + 19
+      ]);
+    }
+    g.setColor(boxColor).fillRect(X+61, Y+1, X+62, Y+5).fillRect(X-8, Y-4, X-3, Y+13);
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X+0, Y+10, X+58, Y+36); // Clear.
+    g.setColor(txtColor).fillRect(X+28, Y+11, X+29, Y+35); // Bar.
     g.setFontAlign(0, 0); // Draw day/month.
-    // Draw day.
-    g.setFont("Vector", 11).drawString(dayStr, X+13, Y+6).setFont("Vector", 18).drawString(dayNum, X+13, Y+21);
-    // Draw month.
-    g.setFont("Vector", 11).drawString(monthStr, X+46, Y+6).setFont("Vector", 18).drawString(monthNum, X+46, Y+21);
+    // Date str.
+    g.setColor(debug ? 0xffff : RED).setFont("Vector", 13).drawString(dayStr, X+14, Y+15).drawString(monthStr, X+46, Y+15);
+    // Date number.
+    g.setColor(txtColor).setFont("Vector", 17).drawString(monthNum, X+46, Y+30).drawString(dayNum, X+14, Y+30);
   };
 
 
@@ -280,19 +293,19 @@ Indigo        - 0x801f
   //
   let drawBpm = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 121;
-    let Y = 142;
-    g.reset().setColor(debug ? 0x07e0 : bgColor).fillRect(X, Y, X+51, Y+22); // Clear.
+    let X = 118;
+    let Y = 147;
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+51, Y+22); // Clear.
     g.setColor(txtColor).setFontAlign(-1, 0);
-    let hr = bp;
-    if (hr>99) {
+    let hr = (!bp || isNaN(bp)) ? '--' : bp;
+    if (typeof hr === "number" && hr > 99) {
       g.setFont("Vector", 18).drawString(hr, X+20, Y+9);
       g.setFont("Vector", 8).drawString('HEART RATE', X+0, Y+21);
     } else {
       g.setFont("Vector", 24).drawString(hr, X+22, Y+13);
       g.setFont("Vector", 7).drawString('BPM', X+1, Y+19);
     }
-    g.setColor(RED);
+    g.setColor(debug ? 0xffff : RED);
     if (Bangle.isHRMOn()) {
       g.drawImage(atob("DxKBAAAAAAAAAePH79/////////+//n/8f/B/wH8AfABwAAAAAA="), X, Y-2);
     } else {
@@ -353,21 +366,21 @@ Indigo        - 0x801f
   let stepIntervallID;
   let drawSteps = function() {
     if (!Bangle.isLCDOn() && !offScreenUpd) return; // Exits the function if the screen is off and offScreenUpd is false.
-    let X = 4;
-    let Y = 128;
-    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+99, Y+38); // Clear.
+    let X = 5;
+    let Y = 126;
+    g.reset().setColor(debug ? RED : bgColor).fillRect(X, Y, X+100, Y+38); // Clear.
     const k = 0.415; // run 0.65 walk 0.415.
-    let steps = Bangle.getHealthStatus("day").steps;
+    let steps = 1999;//Bangle.getHealthStatus("day").steps;
     let stepLength = userHeight * k / 100;
-    let distanceKm = (steps * stepLength) / 1000;
-    let fontSize = 20;
+    let distanceKm = 99;//(steps * stepLength) / 1000;
+    let fontSize = 18;
     if (steps>9999) fontSize = 16;
     g.setColor(txtColor).setFontAlign(-1, 0);
-    g.setFont("Vector", fontSize).drawString(steps, X+46, Y+10);
-    g.setFont("Vector", 15).drawString(distanceKm.toFixed(1)+'km', X+46, Y+32);
-    g.fillRect(X+46, Y+20, X+94, Y+21); // Bar.
-    drawDonutChart(X+19, Y+19, 16, 4, steps, userStepGoal, RED, 0xffff);
-    g.setColor(boxColor).drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+10, Y+10); // Shoe.
+    g.setFont("Vector", fontSize).drawString(steps, X+45, Y+10);
+    g.setFont("Vector", 16).drawString(distanceKm.toFixed(1)+'km', X+45, Y+32);
+    g.fillRect(X+45, Y+20, X+87, Y+21); // Bar.
+    drawDonutChart(X+19, Y+19, 19, 6, steps, userStepGoal, RED, 0xffff);
+    g.setColor(boxColor).drawImage(atob("EhKBAAcAA8MD+cP/8L/8N/oG/4DfoBv8A30Ab8AN+AG+ADfABvAA3AAbAAOA"), X+11, Y+11); // Shoe.
   };
   let drawStepsOnLcdPower = function(on) {
     if (on) drawSteps();
@@ -547,10 +560,10 @@ Indigo        - 0x801f
   let barIntervallID;
   // Get barometer temperature and pressure values.
   let drawWeather = function(pressure) {
-    let X = 3;
-    let Y = 100;
-    g.reset().setColor(debug ? RED : bgColor).fillRect(X+4, Y, X+95, Y+15); // Clear.
+    let X = 5;
+    let Y = 98;
     g.setColor(boxColor).fillRoundedRect(X, Y-1, X+100, Y+16, 7);
+    g.reset().setColor(debug ? RED : boxColor).fillRect(X+4, Y, X+95, Y+15); // Clear.
     g.setColor(boxTxtColor);
     if (pressure > weatherMaxPress) { // Sun.
       g.drawImage(atob("EhCBAADADDDDgHBzOAv0Af4Af4O/9+/9wf4Af4Av0BzODgHDDDADAA=="), X+6, Y);
@@ -561,7 +574,7 @@ Indigo        - 0x801f
     }
     g.setFont("Vector", 16).setFontAlign(1, 0).drawString(pressure, X+74, Y+9);
     require("Font6x8").add(Graphics);
-    g.setFont("6x8").setFontAlign(-1, 0).drawString('hPa', X+79, Y+8);
+    g.setFont("6x8").setFontAlign(-1, 0).drawString('hPa', X+77, Y+8);
   };
   let getBarometer = function(e) {
     let barReadings = 8;
