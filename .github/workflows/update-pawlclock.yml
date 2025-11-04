@@ -1,0 +1,26 @@
+name: Update PawlClock Submodule
+
+on:
+  repository_dispatch:
+    types: [update-pawlclock]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout BangleApps
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update submodule to latest commit
+        run: |
+          cd apps/pawlClock
+          git checkout main
+          git pull origin main
+          cd ../..
+          git add apps/pawlClock
+          git commit -m "Auto-update PawlClock submodule" || echo "No changes to commit"
+          git push origin master
+
