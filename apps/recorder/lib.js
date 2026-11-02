@@ -61,18 +61,45 @@ exports.getRecorders = function() {
       };
     },
     hrm:function() {
-      var bpm = "", bpmConfidence = "", src="";
+      const CONFIDENCE_THRESHOLD = 80;
+      var avgBpm = 0, avgBpmConfidence = 0, src="", nAvgReadings=0, lowConfBpm=null, lowConfBpmConfidence=-1;
+
       function onHRM(h) {
-        bpmConfidence = h.confidence;
-        bpm = h.bpm;
+        let newBpmConfidence = h.confidence;
+        let newBpm = h.bpm;
         src = h.src;
+
+        if (newBpmConfidence >= CONFIDENCE_THRESHOLD){
+          nAvgReadings++;
+          avgBpm = avgBpm + (newBpm-avgBpm)/nAvgReadings;
+          avgBpmConfidence = avgBpmConfidence + (newBpmConfidence-avgBpmConfidence)/nAvgReadings;
+
+        } else if (newBpmConfidence > lowConfBpmConfidence) {
+          lowConfBpmConfidence = newBpmConfidence;
+          lowConfBpm = newBpm;
+        }
       }
+
       return {
         name : "HR",
         fields : ["Heartrate", "Confidence", "Source"],
         getValues : () => {
-          var r = [bpm,bpmConfidence,src];
-          bpm = ""; bpmConfidence = ""; src="";
+          let r;
+
+          if (nAvgReadings === 0) {
+            if (lowConfBpm === null) r = ["","",""];
+            else r = [lowConfBpm,lowConfBpmConfidence,src];
+          } else {
+            r = [Math.round(avgBpm),Math.round(avgBpmConfidence),src];
+          }
+
+          avgBpm = 0;
+          avgBpmConfidence = 0;
+          nAvgReadings=0;
+          lowConfBpm=null;
+          lowConfBpmConfidence=-1;
+          src="";
+
           return r;
         },
         start : () => {
@@ -201,6 +228,19 @@ let getActiveRecorders = function(settings) {
   });
   return activeRecorders;
 };
+let appendMetadataRecorder = function(metadata) {
+  exports.activeRecorders.push({
+    name : "Metadata",
+    fields : ["Metadata"],
+    getValues : () => {
+      let md = metadata ? '"'+JSON.stringify(metadata).replaceAll('"','\\"')+'"' : "";
+      metadata = undefined;
+      return [ md ]
+    },
+    start : () => {},          // Called when recording starts - turn on any hardware/intervals you need
+    stop : () => {}           // Called when recording stops - turn off any hardware/intervals
+  });
+}
 let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
 
 // Write one line to the recorder storage file
@@ -221,7 +261,7 @@ let writeLog = function() {
   }
 }
 
-// Called by the GPS app to reload settings and decide what to do
+// Called by the GPS app to reload settings and decide what to do ( options = { noUpdateWidget:bool, metadata:{...} } )
 exports.reload = function(options) {
   options = options||{};
   var settings = loadSettings();
@@ -234,13 +274,15 @@ exports.reload = function(options) {
   if (settings.recording) {
     // set up recorders
     exports.activeRecorders = getActiveRecorders(settings);
+    if (options.metadata)
+      appendMetadataRecorder(options.metadata);
     exports.activeRecorders.forEach(activeRecorder => {
       activeRecorder.start();
     });
     // open/create file
     if (require("Storage").list(settings.file).length) { // Append
       storageFile = require("Storage").open(settings.file,"a");
-      // TODO: what if loaded modules are different??
+      // TODO: check headers - what if loaded modules are different??
     } else {
       storageFile = require("Storage").open(settings.file,"w");
       // New file - write headers
@@ -263,9 +305,10 @@ exports.reload = function(options) {
 
 // Sets the width of WIDGETS["recorder"]
 exports.setWidgetWidth = function() {
+  let recorders = exports.activeRecorders.filter(r=>r.draw).length;
   WIDGETS["recorder"].width =
-    exports.activeRecorders.length ?
-      15 + ((exports.activeRecorders.length+1)>>1)*12 : // 12px per recorder
+     recorders?
+      15 + ((recorders+1)>>1)*12 : // 12px per recorder
       0;
   Bangle.drawWidgets(); // relayout/redraw all widgets as we changed width
 }
@@ -273,6 +316,7 @@ exports.setWidgetWidth = function() {
 exports.setRecording = function(isOn, options) {
   /* options = {
     force : [optional] "append"/"new"/"overwrite" - don't ask, just do what's requested
+    metadata : [optional] {activity:"Cycling"} optional column to add to the CSV file containing the metadata given (first record only)
   } */
   var settings = loadSettings();
   options = options||{};
@@ -320,7 +364,7 @@ exports.setRecording = function(isOn, options) {
   }
   settings.recording = !!isOn;
   updateSettings(settings);
-  exports.reload();
+  exports.reload({metadata : options.metadata});
   return Promise.resolve(settings.recording);
 };
 

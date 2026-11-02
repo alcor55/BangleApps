@@ -45,7 +45,13 @@ function showTallies(tallies: Tally[]) {
       day = td;
     }
 
-    menu[`${tfmt(tally)}: ${tally.name}`] = () => editTally(tallies, i);
+    let title = `${tfmt(tally)}: ${tally.name}`;
+    let n = 2;
+    while(title in menu){
+      title = `${tfmt(tally)} (${n}): ${tally.name}`
+      n++;
+    }
+    menu[title] = () => editTally(tallies, i);
   });
 
   E.showMenu(menu);
@@ -117,4 +123,11 @@ function tfmt(tally: Tally) {
 
 const pad2 = (s: number) => ("0" + s.toFixed(0)).slice(-2);
 
-showTallies(readTallies());
+const tallyCfg = storage.readJSON("tallycfg.json", 1) as TallySettings || [];
+if (tallyCfg.length === 0) {
+  // No tally types configured yet, so there's nothing to log and nothing
+  // to show here - go straight to settings so the user can add one.
+  eval(storage.read("tally.settings.js") as string)(() => load());
+} else {
+  showTallies(readTallies());
+}

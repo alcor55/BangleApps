@@ -5,13 +5,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/waternet/app.js": {
-    "hash": "a03fbfc731811f8cc9ea8c96781ff7fe46532c5f9e628b317892069e43b97012",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/tabata/tabata.js": {
     "hash": "bba68fd35b57afe00adb054d598d8bde74cf2c9cb1d1d7ae27c17e13899383ee",
     "rules": [
@@ -112,12 +105,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/kbtouch/lib.js": {
-    "hash": "725b41b792a0f9879257e61cc5c2ba30df777c21137bd2d2e324ab83be7b8012",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/jbm8b_IT/app.js": {
     "hash": "52df7b9bcac876176d66cbb65f7015cb0b5933ba585a6e3f6b93766bbe19fb11",
     "rules": [
@@ -126,12 +113,6 @@ module.exports = {
   },
   "apps/jbm8b/app.js": {
     "hash": "7ec45c7d21590f8fa9167f4953fa6da40190d0f287f436dac7a2c4b62d82d429",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
-  "apps/wristlight/app.js": {
-    "hash": "7400a20766b3f3cd837c29ce09c8dbb5bca19a854392fd2b907d7ac058888e2f",
     "rules": [
       "no-unused-vars"
     ]
@@ -197,13 +178,6 @@ module.exports = {
   },
   "apps/moonphase/app.js": {
     "hash": "0e78c9ec9e7ab04f22f1838fcf033691024c8734de23f8d8dd51d6f11c30a2f2",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
-  "apps/lcars/lcars.app.js": {
-    "hash": "297b92373c9e8db3ba31cb3aa42909d18a1951eef9bd7e8e0847957aa411765d",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -589,12 +563,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/rescalc/app.js": {
-    "hash": "925f00a439817fadf92f4e7a7fcd509eb9d9c7e1e4309e315ea92a6881e18b4b",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/regattatimer/app.js": {
     "hash": "8d579cc62d82599f776e5e230651f03481f18c3934f35f4fedfb6382a46db861",
     "rules": [
@@ -633,12 +601,6 @@ module.exports = {
   },
   "apps/presentation_timer/presentation_timer.app.js": {
     "hash": "edb5e46a495bbe65843ec29c079eb401458439b2c5642a713e5d4a7fa80a0bcb",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/pomoplus/common.js": {
-    "hash": "52d7d91b6e5107158b78e5707d6a078490a9a09569669ea8f7c2eb88461b1004",
     "rules": [
       "no-undef"
     ]
@@ -837,12 +799,6 @@ module.exports = {
   },
   "apps/hrmmar/fftelim.js": {
     "hash": "96fa4fd14ff0f6dc5eeda903c6a7b27e71a8e845ed3f0c2b1cafb8e1e53bb405",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/hebrew_calendar/app.js": {
-    "hash": "3077d581b9fcf73816e265e61105a0692356b89e8ed41a82be51960ae26fc8de",
     "rules": [
       "no-undef"
     ]
