@@ -7,3 +7,7 @@
 [submodule "apps/pawlClock"]
 	path = apps/pawlClock
 	url = https://github.com/alcor55/PawlClock.git
+[submodule "apps/pawlgps"]
+	path = apps/pawlgps
+	url = https://github.com/alcor55/PawlGPS.git
+	branch = main
